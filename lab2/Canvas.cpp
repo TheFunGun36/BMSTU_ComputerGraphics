@@ -22,8 +22,35 @@ Canvas::Canvas(QWidget *parent)
     recalculateScene();
 }
 
+void Canvas::apply(const Action *action) {
+    figure.applyAction(*action);
+    actions.push_back(action);
+    recalculateScene();
+}
+
+bool Canvas::undo() {
+    if (actions.isEmpty())
+        return false;
+
+    delete actions.last();
+    actions.pop_back();
+
+    constructFigure();
+    for (const Action *a : actions)
+        figure.applyAction(*a);
+    recalculateScene();
+
+    return true;
+}
+
+void Canvas::reset() {
+    actions.clear();
+    constructFigure();
+    recalculateScene();
+}
+
 QPointF Canvas::getFigureCenter() {
-    return QPointF();
+    return figureCenter->get();
 }
 
 void Canvas::constructFigure() {

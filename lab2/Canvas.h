@@ -12,9 +12,10 @@ class Canvas : public QGraphicsView {
 
 public:
     Canvas(QWidget *parent = nullptr);
-    void apply(const Action &action);
-    void undo();
     QPointF getFigureCenter();
+    void apply(const Action *action);
+    bool undo();
+    void reset();
 
 private:
     QGraphicsScene scene;

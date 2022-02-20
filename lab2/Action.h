@@ -56,10 +56,10 @@ class ActionRotate : public Action {
 public:
     ActionRotate(qreal angle, QPointF center = QPointF(0, 0)) {
         type = Type::Rotate;
-        _angle = angle;
+        _angle = qDegreesToRadians(angle);
         _center = center;
-        _cosAngle = qCos(angle);
-        _sinAngle = qSin(angle);
+        _cosAngle = qCos(_angle);
+        _sinAngle = qSin(_angle);
     }
 
     inline qreal angle() const { return _angle; };

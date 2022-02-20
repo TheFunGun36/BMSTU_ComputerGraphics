@@ -1,4 +1,5 @@
 #include "GraphicsPoint.h"
+#include <qgraphicsitem.h>
 
 GraphicsPoint::GraphicsPoint(QPointF point, QPen pen, QBrush brush) {
     this->point = point;
@@ -10,7 +11,8 @@ void GraphicsPoint::addToScene(QGraphicsScene &scene) const {
     const int r = 5;
     QRect rect(point.x() - r, point.y() - r, 2 * r, 2 * r);
     scene.addEllipse(rect, pen, brush);
-    scene.addText(QString("(%1, %2)").arg(point.x()).arg(point.y()));
+    QGraphicsTextItem *textItem = scene.addText(QString("(%1, %2)").arg(point.x()).arg(point.y()));
+    textItem->setPos(point);
 }
 
 void GraphicsPoint::move(const ActionMove &a) {

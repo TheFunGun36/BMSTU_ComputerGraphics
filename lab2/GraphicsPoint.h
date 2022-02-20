@@ -10,6 +10,8 @@ public:
     virtual void scale(const ActionScale &a) override;
     virtual void rotate(const ActionRotate &a) override;
 
+    inline QPointF get() { return point; }
+
 private:
     QPointF point;
 };
