@@ -7,9 +7,10 @@ GraphicsPoint::GraphicsPoint(QPointF point, QPen pen, QBrush brush) {
 }
 
 void GraphicsPoint::addToScene(QGraphicsScene &scene) const {
-    const int r = 10;
-    QRect rect(point.x() - r, point.y() - r, point.x() + r, point.y() + r);
+    const int r = 5;
+    QRect rect(point.x() - r, point.y() - r, 2 * r, 2 * r);
     scene.addEllipse(rect, pen, brush);
+    scene.addText(QString("(%1, %2)").arg(point.x()).arg(point.y()));
 }
 
 void GraphicsPoint::move(const ActionMove &a) {

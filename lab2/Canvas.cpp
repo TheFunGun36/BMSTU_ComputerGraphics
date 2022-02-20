@@ -2,7 +2,6 @@
 #include <qpainter.h>
 #include "GraphicsPolygon.h"
 #include "GraphicsSnail.h"
-#include "GraphicsPoint.h"
 
 constexpr int maxDist = 4000;
 constexpr int gridStep = 50;
@@ -15,11 +14,16 @@ Canvas::Canvas(QWidget *parent)
     colorAxes = QColor(0, 100, 150);
     colorGrid = QColor(0, 200, 200);
     colorGridAccent = QColor(0, 50, 150);
+    figureCenter = nullptr;
 
     scene.setBackgroundBrush(colorBackground);
 
     constructFigure();
     recalculateScene();
+}
+
+QPointF Canvas::getFigureCenter() {
+    return QPointF();
 }
 
 void Canvas::constructFigure() {
@@ -55,7 +59,8 @@ void Canvas::constructFigure() {
     {
         QPen pen(QColor(0, 0, 0));
         QBrush brush(QColor(0, 0, 0));
-        GraphicsPoint *point = new GraphicsPoint(QPointF(0, 0), pen, brush);
+        figureCenter = new GraphicsPoint(QPointF(0, 0), pen, brush);
+        figure.addObject(figureCenter);
     }
 }
 

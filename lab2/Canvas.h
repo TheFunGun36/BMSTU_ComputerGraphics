@@ -5,6 +5,7 @@
 
 #include "Action.h"
 #include "GraphicsGroup.h"
+#include "GraphicsPoint.h"
 
 class Canvas : public QGraphicsView {
     Q_OBJECT
@@ -24,6 +25,7 @@ private:
     QColor colorGridAccent;
     QList<const Action *> actions;
     GraphicsGroup figure;
+    GraphicsPoint *figureCenter;
 
     void constructFigure();
     void recalculateScene();
