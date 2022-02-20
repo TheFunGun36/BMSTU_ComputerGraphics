@@ -1,36 +1,31 @@
 #pragma once
 #include <qgraphicsview.h>
 #include <qcolor.h>
+#include <qlist.h>
+
+#include "Action.h"
+#include "GraphicsGroup.h"
 
 class Canvas : public QGraphicsView {
     Q_OBJECT
 
 public:
     Canvas(QWidget *parent = nullptr);
-    int getScale();
-
-public slots:
-    void windowResized();
+    void apply(const Action &action);
+    void undo();
+    QPointF getFigureCenter();
 
 private:
     QGraphicsScene scene;
-
-    double margin;
-    int minCellSize;
-    int maxCellSize;
-    double scale;
+    int сellSize;
     QColor colorBackground;
     QColor colorAxes;
     QColor colorGrid;
     QColor colorGridAccent;
-    QRectF screenPosition;
+    QList<const Action *> actions;
+    GraphicsGroup figure;
 
-    QPointF mathToScreen(QPointF point) const;
-    QPointF screenToMath(QPointF point) const;
-    void recalculateScreenPosition();
-
-    //void drawAxes();
-    //void drawGrid();
-    //void drawBackground();
+    void constructFigure();
+    void recalculateScene();
 };
 

@@ -1,13 +1,16 @@
 #include "Canvas.h"
 #include <qpainter.h>
+#include "GraphicsPolygon.h"
+#include "GraphicsSnail.h"
+#include "GraphicsPoint.h"
+
+constexpr int maxDist = 4000;
+constexpr int gridStep = 50;
 
 Canvas::Canvas(QWidget *parent)
     : scene(this), QGraphicsView(parent) {
     setScene(&scene);
-    margin = 0.15;
-    minCellSize = 20;
-    maxCellSize = 210;
-    scale = 1;
+
     colorBackground = QColor(255, 255, 255);
     colorAxes = QColor(0, 100, 150);
     colorGrid = QColor(0, 200, 200);
@@ -15,137 +18,58 @@ Canvas::Canvas(QWidget *parent)
 
     scene.setBackgroundBrush(colorBackground);
 
-    //drawAxes();
-    //drawGrid();
+    constructFigure();
+    recalculateScene();
 }
 
-int Canvas::getScale() {
-    return scale;
-}
+void Canvas::constructFigure() {
+    constexpr qreal rhombusShort = 150.0;
+    constexpr qreal rhombusLong = 200.0;
+    constexpr qreal snailA = 100.0;
+    constexpr qreal snailB = 50.0;
 
-void Canvas::windowResized() {
-    recalculateScreenPosition();
-}
+    figure.clear();
 
-void Canvas::recalculateScreenPosition() {
-    /*
-    double ratio = static_cast<double>(width()) / height();
-
-    QPointF point1 = { tablePoints->item(0, 0)->text().toDouble(), tablePoints->item(0, 1)->text().toDouble() };
-    QPointF point2 = { tablePoints->item(1, 0)->text().toDouble(), tablePoints->item(1, 1)->text().toDouble() };
-    screenPosition = { point1, point2 };
-    int pointsAmount = tablePoints->rowCount();
-
-    for (QPointF point : points) {
-        if (point.x() > screenPosition.right())
-            screenPosition.setRight(point.x());
-        else if (point.x() < screenPosition.left())
-            screenPosition.setLeft(point.x());
-
-        if (point.y() < screenPosition.top())
-            screenPosition.setTop(point.y());
-        else if (point.y() > screenPosition.bottom())
-            screenPosition.setBottom(point.y());
-    };
-
-    if (qFuzzyIsNull(screenPosition.height()) || screenPosition.width() / screenPosition.height() > ratio) {
-        screenPosition.setHeight(screenPosition.width() / ratio);
-    }
-    else {
-        screenPosition.setWidth(ratio * screenPosition.height());
+    // Ромб
+    {
+        QPolygonF poly({
+            { 0.0, rhombusShort },
+            { rhombusLong, 0.0 },
+            { 0.0, -rhombusShort },
+            { -rhombusLong, 0.0}
+            });
+        QPen pen(QColor(200, 20, 20), 2);
+        QBrush brush(QColor(200, 20, 20, 50));
+        figure.addObject(new GraphicsPolygon(poly, pen, brush));
     }
 
-    if (qFuzzyIsNull(screenPosition.width()) || qFuzzyIsNull(screenPosition.height())) {
-        screenPosition.setWidth(width());
-        screenPosition.setHeight(height());
+    // Улитка Паскаля
+    {
+        QPen pen(QColor(20, 200, 20), 2);
+        QBrush brush(QColor(20, 200, 20, 50));
+        GraphicsSnail *snail = new GraphicsSnail(snailA, snailB, QPointF(-rhombusLong / 4, 0), pen, brush);
+        figure.addObject(snail);
     }
 
-    QPointF marginValue = QPointF(margin * screenPosition.width(), margin * screenPosition.height());
-    screenPosition.setLeft(screenPosition.left() - marginValue.x());
-    screenPosition.setRight(screenPosition.right() + marginValue.x());
-    screenPosition.setTop(screenPosition.top() - marginValue.y());
-    screenPosition.setBottom(screenPosition.bottom() + marginValue.y());
-    */
-    
-    screenPosition.setTopLeft(QPointF(-12, -12));
-    screenPosition.setBottomRight(QPointF(12, 12));
-}
-
-/*
-void Canvas::drawAxes() {
-    QPen pen(QBrush(colorAxes), 2);
-    QPointF center = mathToScreen(QPoint(0, 0));
-    scene.addLine(QLineF(0, round(center.y()), width(), round(center.y())), pen);
-    scene.addLine(QLineF(round(center.x()), 0, round(center.x()), height()), pen);
-}
-
-void Canvas::drawGrid(QPainter &qp) {
-    QPointF center = mathToScreen(QPoint(0, 0));
-
-    double delta = mathToScreen(QPoint(1, 0)).x() - center.x();
-
-    scale = 1;
-    while (delta < minCellSize) {
-        delta *= 10;
-        scale *= 10;
+    // Центральная точка
+    {
+        QPen pen(QColor(0, 0, 0));
+        QBrush brush(QColor(0, 0, 0));
+        GraphicsPoint *point = new GraphicsPoint(QPointF(0, 0), pen, brush);
     }
-    while (delta > maxCellSize) {
-        delta /= 10;
-        scale /= 10;
+}
+
+void Canvas::recalculateScene() {
+    scene.clear();
+    for (int i = gridStep; i < maxDist; i += gridStep) {
+        scene.addLine(-maxDist, i, maxDist, i, colorGrid);
+        scene.addLine(-maxDist, -i, maxDist, -i, colorGrid);
+        scene.addLine(i, -maxDist, i, maxDist, colorGrid);
+        scene.addLine(-i, -maxDist, -i, maxDist, colorGrid);
     }
 
-    qp.setPen(colorGrid);
-    for (double cur = center.x(); cur < width(); cur += delta)
-        qp.drawLine(round(cur), 0, round(cur), height());
-    for (double cur = center.x(); cur > 0; cur -= delta)
-        qp.drawLine(round(cur), 0, round(cur), height());
-    for (double cur = center.y(); cur < height(); cur += delta)
-        qp.drawLine(0, round(cur), width(), round(cur));
-    for (double cur = center.y(); cur > 0; cur -= delta)
-        qp.drawLine(0, round(cur), width(), round(cur));
+    scene.addLine(-maxDist, 0, maxDist, 0, QPen(colorAxes, 3));
+    scene.addLine(0, -maxDist, 0, maxDist, QPen(colorAxes, 3));
 
-    delta *= 10;
-    qp.setPen(colorGridAccent);
-    for (double cur = center.x(); cur < width(); cur += delta)
-        qp.drawLine(round(cur), 0, round(cur), height());
-    for (double cur = center.x(); cur > 0; cur -= delta)
-        qp.drawLine(round(cur), 0, round(cur), height());
-    for (double cur = center.y(); cur < height(); cur += delta)
-        qp.drawLine(0, round(cur), width(), round(cur));
-    for (double cur = center.y(); cur > 0; cur -= delta)
-        qp.drawLine(0, round(cur), width(), round(cur));
-}
-
-void Canvas::drawBackground(QPainter &qp) {
-    qp.setBrush(colorBackground);
-    qp.setPen(colorBackground);
-    qp.drawRect(0, 0, width(), height());
-}*/
-
-QPointF Canvas::mathToScreen(QPointF point) const {
-    //Перетаскиваем угол камеры к нужной позиции
-    point -= screenPosition.topLeft();
-
-    // Меняем масштаб
-    point.setX(point.x() * width() / screenPosition.width());
-    point.setY(point.y() * height() / screenPosition.height());
-
-    // Инвертируем ось y
-    point.setY(height() - point.y());
-
-    return point;
-}
-
-QPointF Canvas::screenToMath(QPointF point) const {
-    // Инвертируем ось y
-    point.setY(height() - point.y());
-
-    // Меняем масштаб
-    point.setX(point.x() / width() * screenPosition.width());
-    point.setY(point.y() / height() * screenPosition.height());
-
-    //Перетаскиваем угол камеры к нужной позиции
-    point += screenPosition.topLeft();
-
-    return point;
+    figure.addToScene(scene);
 }

@@ -11,16 +11,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AbstractFigure.cpp" />
     <ClCompile Include="Canvas.cpp" />
+    <ClCompile Include="GraphicsGroup.cpp" />
+    <ClCompile Include="GraphicsPoint.cpp" />
+    <ClCompile Include="GraphicsSnail.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="GraphicsPolygon.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AbstractFigure.h" />
-    <ClInclude Include="IAction.h" />
     <QtMoc Include="MainWindow.h" />
     <QtMoc Include="Canvas.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Action.h" />
+    <ClInclude Include="GraphicsGroup.h" />
+    <ClInclude Include="GraphicsPoint.h" />
+    <ClInclude Include="GraphicsSnail.h" />
+    <ClInclude Include="IGraphicsObject.h" />
+    <ClInclude Include="GraphicsPolygon.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0ECC40FC-D5C2-46CF-B049-28B7F98B97B1}</ProjectGuid>
