@@ -49,13 +49,17 @@ void Canvas::reset() {
     recalculateScene();
 }
 
-QPointF Canvas::getFigureCenter() {
+void Canvas::goToFigure() {
+    ensureVisible(figureCenter->get().x(), figureCenter->get().y(), 0, 0, width() * 0.45, height() * 0.45);
+}
+
+QPoint Canvas::getFigureCenter() {
     return figureCenter->get();
 }
 
 void Canvas::constructFigure() {
-    constexpr qreal rhombusShort = 150.0;
-    constexpr qreal rhombusLong = 200.0;
+    constexpr int rhombusShort = 150;
+    constexpr int rhombusLong = 200;
     constexpr qreal snailA = 100.0;
     constexpr qreal snailB = 50.0;
 
@@ -63,11 +67,11 @@ void Canvas::constructFigure() {
 
     // Ромб
     {
-        QPolygonF poly({
-            { 0.0, rhombusShort },
-            { rhombusLong, 0.0 },
-            { 0.0, -rhombusShort },
-            { -rhombusLong, 0.0}
+        QPolygon poly({
+            { 0, rhombusShort },
+            { rhombusLong, 0 },
+            { 0, -rhombusShort },
+            { -rhombusLong, 0}
             });
         QPen pen(QColor(200, 20, 20), 2);
         QBrush brush(QColor(200, 20, 20, 50));
@@ -78,7 +82,7 @@ void Canvas::constructFigure() {
     {
         QPen pen(QColor(20, 200, 20), 2);
         QBrush brush(QColor(20, 200, 20, 50));
-        GraphicsSnail *snail = new GraphicsSnail(snailA, snailB, QPointF(-rhombusLong / 4, 0), pen, brush);
+        GraphicsSnail *snail = new GraphicsSnail(snailA, snailB, QPoint(-rhombusLong / 4, 0), pen, brush);
         figure.addObject(snail);
     }
 
@@ -86,7 +90,7 @@ void Canvas::constructFigure() {
     {
         QPen pen(QColor(0, 0, 0));
         QBrush brush(QColor(0, 0, 0));
-        figureCenter = new GraphicsPoint(QPointF(0, 0), pen, brush);
+        figureCenter = new GraphicsPoint(QPoint(0, 0), pen, brush);
         figure.addObject(figureCenter);
     }
 }
@@ -104,4 +108,7 @@ void Canvas::recalculateScene() {
     scene.addLine(0, -maxDist, 0, maxDist, QPen(colorAxes, 3));
 
     figure.addToScene(scene);
+
+    // тонкий отрезок, чтобы не потерять фигуру
+    scene.addLine(0, 0, figureCenter->get().x(), figureCenter->get().y(), QPen(QColor(255,0,0,100), 1, Qt::DashLine));
 }

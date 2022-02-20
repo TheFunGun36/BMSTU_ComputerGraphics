@@ -5,7 +5,7 @@ class GraphicsSnail : public IGraphicsObject {
 public:
     GraphicsSnail(qreal a,
         qreal b,
-        QPointF center = QPointF(),
+        QPoint center = QPoint(),
         QPen pen = QPen(),
         QBrush brush = QBrush());
 
@@ -42,6 +42,6 @@ private:
     qreal by;
     qreal cy;
     qreal dy;
-    QPointF center;
+    QPoint center;
 };
 

@@ -5,7 +5,7 @@
 
 class GraphicsPolygon : public IGraphicsObject {
 public:
-    GraphicsPolygon(const QPolygonF &polygon, QPen pen = QPen(), QBrush brush = QBrush());
+    GraphicsPolygon(const QPolygon &polygon, QPen pen = QPen(), QBrush brush = QBrush());
     virtual void addToScene(QGraphicsScene &scene) const override;
 
     virtual void move(const ActionMove &a) override;
@@ -13,6 +13,6 @@ public:
     virtual void rotate(const ActionRotate &a) override;
 
 private:
-    QPolygonF polygon;
+    QPolygon polygon;
 };
 

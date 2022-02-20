@@ -3,15 +3,15 @@
 
 class GraphicsPoint : public IGraphicsObject {
 public:
-    GraphicsPoint(QPointF point, QPen pen = QPen(), QBrush brush = QBrush());
+    GraphicsPoint(QPoint point, QPen pen = QPen(), QBrush brush = QBrush());
 
     virtual void addToScene(QGraphicsScene &scene) const override;
     virtual void move(const ActionMove &a) override;
     virtual void scale(const ActionScale &a) override;
     virtual void rotate(const ActionRotate &a) override;
 
-    inline QPointF get() { return point; }
+    inline QPoint get() { return point; }
 
 private:
-    QPointF point;
+    QPoint point;
 };

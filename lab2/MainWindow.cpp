@@ -26,12 +26,19 @@ MainWindow::MainWindow(QWidget *parent)
     leftPanel->addSpacerItem(new QSpacerItem(0, 20));
 
     QPushButton *cancel = new QPushButton("Отменить последнее действие", this);
+    cancel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     connect(cancel, &QPushButton::clicked, this, &MainWindow::clickedUndo);
     leftPanel->addWidget(cancel);
 
     QPushButton *reset = new QPushButton("Сбросить", this);
+    reset->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     connect(reset, &QPushButton::clicked, canvas, &Canvas::reset);
     leftPanel->addWidget(reset);
+
+    QPushButton *goToFigure = new QPushButton("Переместиться к фигуре", this);
+    goToFigure->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    connect(goToFigure, &QPushButton::clicked, canvas, &Canvas::goToFigure);
+    leftPanel->addWidget(goToFigure);
 
     leftPanel->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
@@ -46,6 +53,8 @@ void MainWindow::createMoveSection(QVBoxLayout *layout) {
 
     lineMoveDx = new QLineEdit(this);
     lineMoveDy = new QLineEdit(this);
+    lineMoveDx->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    lineMoveDy->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     QIntValidator *validator = new QIntValidator(this);
     lineMoveDx->setValidator(validator);
@@ -60,6 +69,7 @@ void MainWindow::createMoveSection(QVBoxLayout *layout) {
     layout->addLayout(layoutData);
 
     QPushButton *apply = new QPushButton("Перенести", this);
+    apply->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     connect(apply, &QPushButton::clicked, this, &MainWindow::clickedApplyMove);
     layout->addWidget(apply);
 };
@@ -73,6 +83,10 @@ void MainWindow::createScaleSection(QVBoxLayout *layout) {
     lineScaleKy = new QLineEdit(this);
     lineScaleCenterX = new QLineEdit(this);
     lineScaleCenterY = new QLineEdit(this);
+    lineScaleKx->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    lineScaleKy->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    lineScaleCenterX->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    lineScaleCenterY->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     lineScaleCenterX->setPlaceholderText("x");
     lineScaleCenterY->setPlaceholderText("y");
 
@@ -106,6 +120,7 @@ void MainWindow::createScaleSection(QVBoxLayout *layout) {
     layout->addWidget(useOrigin);
 
     QPushButton *apply = new QPushButton("Масштабировать", this);
+    apply->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     connect(apply, &QPushButton::clicked, this, &MainWindow::clickedApplyScale);
     layout->addWidget(apply);
 };
@@ -118,6 +133,9 @@ void MainWindow::createRotateSection(QVBoxLayout *layout) {
     lineRotateAngle = new QLineEdit(this);
     lineRotateCenterX = new QLineEdit(this);
     lineRotateCenterY = new QLineEdit(this);
+    lineRotateAngle->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    lineRotateCenterX->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    lineRotateCenterY->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     lineRotateCenterX->setPlaceholderText("x");
     lineRotateCenterY->setPlaceholderText("y");
 
@@ -145,12 +163,13 @@ void MainWindow::createRotateSection(QVBoxLayout *layout) {
     layout->addWidget(useOrigin);
 
     QPushButton *apply = new QPushButton("Повернуть", this);
+    apply->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     connect(apply, &QPushButton::clicked, this, &MainWindow::clickedApplyRotate);
     layout->addWidget(apply);
 };
 
 void MainWindow::clickedScaleRelativeToObject() {
-    QPoint p = canvas->getFigureCenter().toPoint();
+    QPoint p = canvas->getFigureCenter();
     lineScaleCenterX->setText(QString::number(p.x()));
     lineScaleCenterY->setText(QString::number(p.y()));
 }
@@ -161,7 +180,7 @@ void MainWindow::clickedScaleRelativeToOrigin() {
 }
 
 void MainWindow::clickedRotateRelativeToObject() {
-    QPoint p = canvas->getFigureCenter().toPoint();
+    QPoint p = canvas->getFigureCenter();
     lineRotateCenterX->setText(QString::number(p.x()));
     lineRotateCenterY->setText(QString::number(p.y()));
 }

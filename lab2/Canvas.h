@@ -12,10 +12,11 @@ class Canvas : public QGraphicsView {
 
 public:
     Canvas(QWidget *parent = nullptr);
-    QPointF getFigureCenter();
+    QPoint getFigureCenter();
     void apply(const Action *action);
     bool undo();
     void reset();
+    void goToFigure();
 
 private:
     QGraphicsScene scene;
