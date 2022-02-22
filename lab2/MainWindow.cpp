@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::createMoveSection(QVBoxLayout *layout) {
     QLabel *title = new QLabel("Перенос", this);
-    title->setFont(QFont("Times New Roman", 18));
+    title->setFont(QFont("Calibri", 18));
     layout->addWidget(title);
 
     lineMoveDx = new QLineEdit(this);
@@ -76,7 +76,7 @@ void MainWindow::createMoveSection(QVBoxLayout *layout) {
 
 void MainWindow::createScaleSection(QVBoxLayout *layout) {
     QLabel *title = new QLabel("Масштаб", this);
-    title->setFont(QFont("Times New Roman", 18));
+    title->setFont(QFont("Calibri", 18));
     layout->addWidget(title);
 
     lineScaleKx = new QLineEdit(this);
@@ -127,7 +127,7 @@ void MainWindow::createScaleSection(QVBoxLayout *layout) {
 
 void MainWindow::createRotateSection(QVBoxLayout *layout) {
     QLabel *title = new QLabel("Поворот", this);
-    title->setFont(QFont("Times New Roman", 18));
+    title->setFont(QFont("Calibri", 18));
     layout->addWidget(title);
 
     lineRotateAngle = new QLineEdit(this);

@@ -20,7 +20,10 @@ void GraphicsSnail::addToScene(QGraphicsScene &scene) const {
     QPolygon p;
 
     // dt поодбрано так, чтобы максимальное расстояние между точками было близко к 1
-    const qreal dt = M_PI / 100;
+    qreal largestCoef = qMax(
+        qMax(qMax(qAbs(ax), qAbs(bx)), qMax(qAbs(cx), qAbs(dx))),
+        qMax(qMax(qAbs(ay), qAbs(by)), qMax(qAbs(cy), qAbs(dy))));
+    qreal dt = M_PI / (largestCoef / 2);
     for (qreal t = 0; t < 2 * M_PI; t += dt) {
         p.push_back(QPoint(x(t), y(t)));
     }
