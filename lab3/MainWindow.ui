@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindowClass</class>
+ <widget class="QMainWindow" name="MainWindowClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>825</width>
+    <height>566</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <widget class="QTabWidget" name="tabs">
+      <property name="focusPolicy">
+       <enum>Qt::TabFocus</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="usesScrollButtons">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="tabDraw">
+       <attribute name="title">
+        <string>Рисование отрезка</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <layout class="QVBoxLayout" name="drawLeftPanel">
+          <item>
+           <widget class="QLabel" name="drawLabelLineStart">
+            <property name="text">
+             <string>Координаты начальной точки:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="drawLayoutLineStart">
+            <item>
+             <widget class="QLineEdit" name="drawLineStartX">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="placeholderText">
+               <string>x</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="drawLineStartY">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="placeholderText">
+               <string>y</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="drawSpacer1">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>8</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="drawLabelLineEnd">
+            <property name="text">
+             <string>Координаты конечной точки:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="drawLayoutLineEnd">
+            <item>
+             <widget class="QLineEdit" name="drawLineEndX">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="placeholderText">
+               <string>x</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="drawLineEndY">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="placeholderText">
+               <string>y</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="drawSpacer2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>8</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="drawLabelAlgorithm">
+            <property name="text">
+             <string>Используемый алгоритм отрисовки отрезка:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="drawComboAlgorithm">
+            <item>
+             <property name="text">
+              <string>Цифровой дифференциальный анализатор</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Алгоритм Брезенхема (вещественный)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Алгоритм Брезенхема (целочисленный)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Алгоритм Брезенхема (модифицированный)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Алгоритм Ву</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Библиотечный алгоритм</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <spacer name="drawSpacer3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>8</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="drawLabelColor">
+            <property name="text">
+             <string>Цвет отрезка:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="drawComboColor">
+            <item>
+             <property name="text">
+              <string>Чёрный</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Белый</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Красный</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Зелёный</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Синий</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <spacer name="drawSpacer4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>16</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="drawButtonPaint">
+            <property name="text">
+             <string>Нарисовать отрезок</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="drawSpacer5">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QOpenGLWidget" name="drawCanvas">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>500</width>
+            <height>500</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabSun">
+       <attribute name="title">
+        <string>Углы наклона отрезков</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <layout class="QVBoxLayout" name="sunLeftPanel">
+          <item>
+           <layout class="QGridLayout" name="sunLayoutGrid">
+            <property name="horizontalSpacing">
+             <number>9</number>
+            </property>
+            <property name="verticalSpacing">
+             <number>2</number>
+            </property>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="sunLineLength">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="sunLineAngle">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="sunLabelLength">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Длина отрезков:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="sunLabelAngle">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Количество отрезков:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="sunSpacer1">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>8</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="sunLabelColor">
+            <property name="text">
+             <string>Цвет отрезка:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="sunComboColor">
+            <item>
+             <property name="text">
+              <string>Чёрный</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Белый</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Красный</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Зелёный</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Синий</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <spacer name="sunSpacer2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>8</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="sunLabelAlgorithm">
+            <property name="text">
+             <string>Используемый алгоритм отрисовки отрезка:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="sunComboAlgorithm">
+            <item>
+             <property name="text">
+              <string>Цифровой дифференциальный анализатор</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Алгоритм Брезенхема (вещественный)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Алгоритм Брезенхема (целочисленный)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Алгоритм Брезенхема (модифицированный)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Алгоритм Ву</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Библиотечный алгоритм</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>16</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="sunButtonPaint">
+            <property name="text">
+             <string>Отрисовать &quot;солнце&quot;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="sunSpacer3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QOpenGLWidget" name="sunCanvas">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>500</width>
+            <height>500</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabLadder">
+       <attribute name="title">
+        <string>График ступенчатости</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tabChart">
+       <attribute name="title">
+        <string>Гистограмма производительности</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>tabs</tabstop>
+  <tabstop>drawLineStartX</tabstop>
+  <tabstop>drawLineStartY</tabstop>
+  <tabstop>drawLineEndX</tabstop>
+  <tabstop>drawLineEndY</tabstop>
+  <tabstop>drawComboAlgorithm</tabstop>
+  <tabstop>drawComboColor</tabstop>
+  <tabstop>drawButtonPaint</tabstop>
+  <tabstop>sunLineAngle</tabstop>
+  <tabstop>sunLineLength</tabstop>
+  <tabstop>sunComboColor</tabstop>
+  <tabstop>sunComboAlgorithm</tabstop>
+ </tabstops>
+ <resources>
+  <include location="MainWindow.qrc"/>
+ </resources>
+ <connections/>
+</ui>
