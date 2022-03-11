@@ -11,4 +11,8 @@ public:
 
 private:
     Ui::MainWindowClass ui;
+    void setupTabDraw();
+    void setupTabSun();
+    void setupTabGraph();
+    void setupTabChart();
 };

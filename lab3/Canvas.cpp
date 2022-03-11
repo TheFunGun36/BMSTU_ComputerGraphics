@@ -68,19 +68,23 @@ void Canvas::addLine(QLine line, LineColor color, LineAlgorithm alg) {
 }
 
 void Canvas::undo() {
-    imageClear();
-    lines.pop_back();
-    for (const auto &line : lines) {
-        if (line.algorithm)
-            imageAddLine(line);
+    if (!lines.isEmpty()) {
+        imageClear();
+        lines.pop_back();
+        for (const auto &line : lines) {
+            if (line.algorithm)
+                imageAddLine(line);
+        }
+        update();
     }
-    update();
 }
 
 void Canvas::clear() {
-    lines.clear();
-    imageClear();
-    update();
+    if (!lines.isEmpty()) {
+        lines.clear();
+        imageClear();
+        update();
+    }
 }
 
 void Canvas::paintEvent(QPaintEvent *e) {
@@ -94,7 +98,7 @@ void Canvas::paintEvent(QPaintEvent *e) {
         if (!line.algorithm)
             drawLine(qp, line);
     }
-    
+
     qp.end();
 }
 

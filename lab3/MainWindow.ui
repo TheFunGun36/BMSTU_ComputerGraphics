@@ -292,6 +292,24 @@
             </property>
            </spacer>
           </item>
+          <item>
+           <layout class="QHBoxLayout" name="drawLayoutUndo">
+            <item>
+             <widget class="QPushButton" name="drawButtonUndo">
+              <property name="text">
+               <string>Отменить последнее действие</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="drawButtonClear">
+              <property name="text">
+               <string>Очистить поле</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </item>
         <item>
