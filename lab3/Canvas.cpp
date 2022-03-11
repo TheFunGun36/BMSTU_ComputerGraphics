@@ -3,6 +3,8 @@
 #include <qpainter.h>
 #include <cassert>
 
+static const int canvasSize = 500;
+
 Canvas::Line::Line(const QLine &pos, LineColor clr, LineAlgorithm alg) {
     position = pos;
     algorithm = nullptr;
@@ -48,8 +50,10 @@ Canvas::Line::Line(const QLine &pos, LineColor clr, LineAlgorithm alg) {
 
 Canvas::Canvas(QWidget *parent)
     : QOpenGLWidget(parent),
-    image(500, 500, QImage::Format::Format_RGB888) {
-    setFixedSize(500, 500);
+    image(canvasSize - 2, canvasSize - 2, QImage::Format::Format_RGB888) {
+    setFixedSize(canvasSize, canvasSize);
+    imageBackgroundColor = QColor(255, 255, 255);
+    imageBorderColor = QColor(127, 127, 127);
     imageClear();
 }
 
@@ -82,7 +86,9 @@ void Canvas::clear() {
 void Canvas::paintEvent(QPaintEvent *e) {
     QPainter qp;
     qp.begin(this);
-    qp.drawImage(0, 0, image);
+    qp.setPen(imageBorderColor);
+    qp.drawRect(0, 0, canvasSize - 1, canvasSize - 1);
+    qp.drawImage(1, 1, image);
 
     for (const auto &line : lines) {
         if (!line.algorithm)

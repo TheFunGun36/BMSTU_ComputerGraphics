@@ -43,6 +43,7 @@ private:
     QList<Line> lines;
     QImage image;
     QColor imageBackgroundColor;
+    QColor imageBorderColor;
 
     void drawLine(QPainter &qp, const Line &line);
     void imageAddLine(const Line &line);
