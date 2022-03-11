@@ -10,6 +10,12 @@
     <height>566</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -45,7 +51,7 @@
             <item>
              <widget class="QLineEdit" name="drawLineStartX">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -58,7 +64,7 @@
             <item>
              <widget class="QLineEdit" name="drawLineStartY">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -98,7 +104,7 @@
             <item>
              <widget class="QLineEdit" name="drawLineEndX">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -111,7 +117,7 @@
             <item>
              <widget class="QLineEdit" name="drawLineEndY">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -148,6 +154,12 @@
           </item>
           <item>
            <widget class="QComboBox" name="drawComboAlgorithm">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <item>
              <property name="text">
               <string>Цифровой дифференциальный анализатор</string>
@@ -205,6 +217,12 @@
           </item>
           <item>
            <widget class="QComboBox" name="drawComboColor">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <item>
              <property name="text">
               <string>Чёрный</string>
@@ -250,6 +268,12 @@
           </item>
           <item>
            <widget class="QPushButton" name="drawButtonPaint">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Нарисовать отрезок</string>
             </property>
@@ -271,9 +295,9 @@
          </layout>
         </item>
         <item>
-         <widget class="QOpenGLWidget" name="drawCanvas">
+         <widget class="Canvas" name="drawCanvas">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -532,6 +556,13 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>Canvas</class>
+   <extends>QOpenGLWidget</extends>
+   <header>Canvas.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>tabs</tabstop>
   <tabstop>drawLineStartX</tabstop>
