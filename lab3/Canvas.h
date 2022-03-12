@@ -41,11 +41,9 @@ private:
     };
 
     QList<Line> lines;
-    QImage image;
+    QPixmap pixmap;
     QColor imageBackgroundColor;
     QColor imageBorderColor;
 
-    void drawLine(QPainter &qp, const Line &line);
-    void imageAddLine(const Line &line);
-    void imageClear();
+    void drawLine(const Line &line);
 };

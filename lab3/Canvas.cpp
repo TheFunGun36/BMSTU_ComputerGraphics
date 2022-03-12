@@ -50,31 +50,26 @@ Canvas::Line::Line(const QLine &pos, LineColor clr, LineAlgorithm alg) {
 
 Canvas::Canvas(QWidget *parent)
     : QOpenGLWidget(parent),
-    image(canvasSize - 2, canvasSize - 2, QImage::Format::Format_RGB888) {
+    pixmap(canvasSize - 2, canvasSize - 2) {
     setFixedSize(canvasSize, canvasSize);
     imageBackgroundColor = QColor(255, 255, 255);
     imageBorderColor = QColor(127, 127, 127);
-    imageClear();
+    pixmap.fill(imageBackgroundColor);
 }
 
 void Canvas::addLine(QLine line, LineColor color, LineAlgorithm alg) {
     Line l(line, color, alg);
-
-    if (alg != LineAlgorithm::Library)
-        imageAddLine(l);
-
+    drawLine(l);
     lines.push_back(l);
     update();
 }
 
 void Canvas::undo() {
     if (!lines.isEmpty()) {
-        imageClear();
+        pixmap.fill(imageBackgroundColor);
         lines.pop_back();
-        for (const auto &line : lines) {
-            if (line.algorithm)
-                imageAddLine(line);
-        }
+        for (const auto &line : lines)
+            drawLine(line);
         update();
     }
 }
@@ -82,7 +77,7 @@ void Canvas::undo() {
 void Canvas::clear() {
     if (!lines.isEmpty()) {
         lines.clear();
-        imageClear();
+        pixmap.fill(imageBackgroundColor);
         update();
     }
 }
@@ -92,27 +87,19 @@ void Canvas::paintEvent(QPaintEvent *e) {
     qp.begin(this);
     qp.setPen(imageBorderColor);
     qp.drawRect(0, 0, canvasSize - 1, canvasSize - 1);
-    qp.drawImage(1, 1, image);
-
-    for (const auto &line : lines) {
-        if (!line.algorithm)
-            drawLine(qp, line);
-    }
-
+    qp.drawPixmap(1, 1, pixmap);
     qp.end();
 }
 
-void Canvas::drawLine(QPainter &qp, const Line &line) {
-    assert(!line.algorithm);
-    qp.setPen(line.color);
-    qp.drawLine(line.position);
-}
-
-void Canvas::imageAddLine(const Line &line) {
-    assert(line.algorithm);
-    line.algorithm(image, line.position, line.color);
-}
-
-void Canvas::imageClear() {
-    image.fill(imageBackgroundColor);
+void Canvas::drawLine(const Line &line) {
+    if (line.algorithm) {
+        QImage image = pixmap.toImage();
+        line.algorithm(image, line.position, line.color);
+        pixmap = QPixmap::fromImage(image);
+    }
+    else {
+        QPainter qp(&pixmap);
+        qp.setPen(line.color);
+        qp.drawLine(line.position);
+    }
 }
