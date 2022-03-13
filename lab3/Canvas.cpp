@@ -20,7 +20,7 @@ Canvas::Line::Line(const QLine &pos, LineColor clr, LineAlgorithm alg) {
             algorithm = algorithmBrezenhamInt;
             break;
         case LineAlgorithm::brezenhamMod:
-            algorithm = algorithmBrezenhamMod;
+            algorithm = algorithmBrezenhamAntialias;
             break;
         case LineAlgorithm::Wu:
             algorithm = algorithmWu;

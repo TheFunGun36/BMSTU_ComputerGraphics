@@ -177,7 +177,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Алгоритм Брезенхема (модифицированный)</string>
+              <string>Алгоритм Брезенхема (со сглаживанием)</string>
              </property>
             </item>
             <item>

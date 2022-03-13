@@ -5,6 +5,14 @@ static inline int sign(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
+static inline QColor colorBlend(QColor a, QColor b, float ratio) {
+    return QColor(
+        a.red() * ratio + b.red() * (1 - ratio),
+        a.green() * ratio + b.green() * (1 - ratio),
+        a.blue() * ratio + b.blue() * (1 - ratio)
+    );
+}
+
 void algorithmDDA(QImage &pixmap, const QLine &line, const QColor &color) {
     // Здесь qreal - тип данных действительного числа
     qreal dx = line.x2() - line.x1();
@@ -26,60 +34,135 @@ void algorithmDDA(QImage &pixmap, const QLine &line, const QColor &color) {
 }
 
 void algorithmBrezenhamFloat(QImage &pixmap, const QLine &line, const QColor &color) {
-    QPoint d(line.x2() - line.x1(), line.y2() - line.y1());
-    QPoint s(sign(d.x()), sign(d.y()));
-    QPoint p(line.x1(), line.y1());
+    int deltaX = line.x2() - line.x1();
+    int deltaY = line.y2() - line.y1();
 
-    bool swapped = false;
-    if (d.y() > d.x()) {
-        d = d.transposed();
-        s = s.transposed();
-        p = p.transposed();
-        swapped = true;
-    }
+    int stepX = sign(deltaX);
+    int stepY = sign(deltaY);
+    int x = line.x1();
+    int y = line.y1();
 
-    qreal e = qreal(d.y()) / d.x() - 0.5;
+    if (abs(deltaX) > abs(deltaY)) {
+        qreal error = qreal(deltaY) / deltaX - 0.5;
+        while (x != line.x2()) {
+            pixmap.setPixel(x, y, color.rgba());
 
-    for (int i = 0; i <= d.x(); i++) {
-        pixmap.setPixel(swapped ? p.transposed() : p, color.rgba());
+            if (error >= 0) {
+                y += stepY;
+                error -= 1.;
+            }
 
-        while (e >= 0) {
-            p.setY(p.y() + s.y());
-            e -= 1;
+            error += qreal(deltaY) / deltaX;
+            x += stepX;
         }
+    }
+    else {
+        qreal error = qreal(deltaX) / deltaY - 0.5;
+        while (y != line.y2()) {
+            pixmap.setPixel(x, y, color.rgba());
 
-        p.setX(p.x() + s.x());
-        e += qreal(d.y()) / d.x();
+            if (error >= 0) {
+                x += stepX;
+                error -= 1.0;
+            }
+
+            error += qreal(deltaX) / deltaY;
+            y += stepY;
+        }
     }
 }
 
 void algorithmBrezenhamInt(QImage &pixmap, const QLine &line, const QColor &color) {
-    QPoint d(line.x2() - line.x1(), line.y2() - line.y1());
-    QPoint s(sign(d.x()), sign(d.y()));
-    QPoint p(line.x1(), line.y1());
+    int deltaX = line.x2() - line.x1();
+    int deltaY = line.y2() - line.y1();
 
-    bool swapped = false;
-    if (d.y() > d.x()) {
-        d = d.transposed();
-        s = s.transposed();
-        p = p.transposed();
-        swapped = true;
-    }
+    int stepX = sign(deltaX);
+    int stepY = sign(deltaY);
+    int x = line.x1();
+    int y = line.y1();
 
-    int e = 2 * d.y() - d.x();
+    if (abs(deltaX) > abs(deltaY)) {
+        int error = 2 * deltaY - deltaX;
+        while (x != line.x2()) {
+            pixmap.setPixel(x, y, color.rgba());
 
-    for (int i = 0; i <= d.x(); i++) {
-        pixmap.setPixel(swapped ? p.transposed() : p, color.rgba());
+            if (error >= 0) {
+                y += stepY;
+                error -= 2 * deltaX;
+            }
 
-        while (e >= 0) {
-            p.setY(p.y() + s.y());
-            e -= 2 * d.x();
+            error += 2 * deltaY;
+            x += stepX;
         }
+    }
+    else {
+        int error = 2 * deltaX - deltaY;
+        while (y != line.y2()) {
+            pixmap.setPixel(x, y, color.rgba());
 
-        p.setX(p.x() + s.x());
-        e += 2 * d.y();
+            if (error >= 0) {
+                x += stepX;
+                error -= 2 * deltaY;
+            }
+
+            error += 2 * deltaX;
+            y += stepY;
+        }
     }
 }
 
-void algorithmBrezenhamMod(QImage &pixmap, const QLine &line, const QColor &color) {}
+void algorithmBrezenhamAntialias(QImage &pixmap, const QLine &line, const QColor &color) {
+    int deltaX = line.x2() - line.x1();
+    int deltaY = line.y2() - line.y1();
+
+    int stepX = sign(deltaX);
+    int stepY = sign(deltaY);
+
+    deltaX = abs(deltaX);
+    deltaY = abs(deltaY);
+
+    int x = line.x1();
+    int y = line.y1();
+
+    qreal maxI = 1.;
+    qreal error = maxI / 2.;
+
+    if (deltaX > deltaY) {
+        qreal m = qreal(maxI) * deltaY / deltaX;
+        qreal w = maxI - m;
+
+        while (x != line.x2()) {
+            pixmap.setPixelColor(x, y, colorBlend(color, pixmap.pixelColor(x, y), maxI - abs(error)));
+
+            x += stepX;
+
+            if (error <= w) {
+                error += m;
+            }
+            else {
+                y += stepY;
+                error -= w;
+            }
+        }
+    }
+    else {
+        qreal m = qreal(maxI) * deltaX / deltaY;
+        qreal w = maxI - m;
+
+        while (y != line.y2()) {
+            pixmap.setPixelColor(x, y, colorBlend(color, pixmap.pixelColor(x, y), maxI - error));
+
+            y += stepY;
+
+            if (error <= w) {
+                error += m;
+            }
+            else {
+                x += stepX;
+                error -= w;
+            }
+        }
+    }
+}
+
 void algorithmWu(QImage &pixmap, const QLine &line, const QColor &color) {}
