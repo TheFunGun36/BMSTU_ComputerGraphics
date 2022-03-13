@@ -24,7 +24,7 @@ class Canvas : public QOpenGLWidget {
 public:
     Canvas(QWidget *parent = nullptr);
 
-    void addLine(QLine line, LineColor color, LineAlgorithm alg);
+    void addSun(QLine line, LineColor color, LineAlgorithm algorithm, int linesAmount = 1);
     void undo();
     void clear();
 
@@ -32,18 +32,18 @@ protected:
     void paintEvent(QPaintEvent *e) override;
 
 private:
-    struct Line {
-        QLine position;
+    struct Sun {
+        QList<QLine> lines;
         QColor color;
         void (*algorithm)(QImage &pixmap, const QLine &line, const QColor &color);
-        
-        Line(const QLine &pos, LineColor clr, LineAlgorithm alg);
+
+        Sun(const QLine &base, LineColor clr, LineAlgorithm alg, int amount = 1);
     };
 
-    QList<Line> lines;
+    QList<Sun> suns;
     QPixmap pixmap;
     QColor imageBackgroundColor;
     QColor imageBorderColor;
 
-    void drawLine(const Line &line);
+    void drawSun(const Sun &line);
 };

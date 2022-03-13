@@ -5,8 +5,24 @@
 
 static const int canvasSize = 500;
 
-Canvas::Line::Line(const QLine &pos, LineColor clr, LineAlgorithm alg) {
-    position = pos;
+Canvas::Sun::Sun(const QLine &base, LineColor clr, LineAlgorithm alg, int amount) {
+    lines.push_back(base);
+
+    if (amount > 1) {
+        qreal angle = 2 * M_PI / amount;
+        QLineF line = base;
+        qreal dx = base.p2().x() - base.p1().x();
+        qreal dy = base.p2().y() - base.p1().y();
+        for (int i = 1; i < amount; i++) {
+            qreal cosa = qCos(i * angle);
+            qreal sina = qSin(i * angle);
+            qreal x = base.p1().x() + dx * cosa + dy * sina;
+            qreal y = base.p1().y() - dx * sina + dy * cosa;
+            line.setP2(QPointF(x, y));
+            lines.push_back(line.toLine());
+        }
+    }
+
     algorithm = nullptr;
 
     switch (alg) {
@@ -57,26 +73,26 @@ Canvas::Canvas(QWidget *parent)
     pixmap.fill(imageBackgroundColor);
 }
 
-void Canvas::addLine(QLine line, LineColor color, LineAlgorithm alg) {
-    Line l(line, color, alg);
-    drawLine(l);
-    lines.push_back(l);
+void Canvas::addSun(QLine line, LineColor color, LineAlgorithm alg, int lines) {
+    Sun s(line, color, alg, lines);
+    drawSun(s);
+    suns.push_back(s);
     update();
 }
 
 void Canvas::undo() {
-    if (!lines.isEmpty()) {
+    if (!suns.isEmpty()) {
         pixmap.fill(imageBackgroundColor);
-        lines.pop_back();
-        for (const auto &line : lines)
-            drawLine(line);
+        suns.pop_back();
+        for (const auto &sun : suns)
+            drawSun(sun);
         update();
     }
 }
 
 void Canvas::clear() {
-    if (!lines.isEmpty()) {
-        lines.clear();
+    if (!suns.isEmpty()) {
+        suns.clear();
         pixmap.fill(imageBackgroundColor);
         update();
     }
@@ -91,15 +107,17 @@ void Canvas::paintEvent(QPaintEvent *e) {
     qp.end();
 }
 
-void Canvas::drawLine(const Line &line) {
-    if (line.algorithm) {
+void Canvas::drawSun(const Sun &sun) {
+    if (sun.algorithm) {
         QImage image = pixmap.toImage();
-        line.algorithm(image, line.position, line.color);
+        for (const QLine line : sun.lines)
+            sun.algorithm(image, line, sun.color);
         pixmap = QPixmap::fromImage(image);
     }
     else {
         QPainter qp(&pixmap);
-        qp.setPen(line.color);
-        qp.drawLine(line.position);
+        qp.setPen(sun.color);
+        for (const QLine line : sun.lines)
+            qp.drawLine(line);
     }
 }
