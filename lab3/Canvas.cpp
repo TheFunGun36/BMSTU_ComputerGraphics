@@ -3,8 +3,6 @@
 #include <qpainter.h>
 #include <cassert>
 
-static const int canvasSize = 500;
-
 Canvas::Sun::Sun(const QLine &base, LineColor clr, LineAlgorithm alg, int amount) {
     lines.push_back(base);
 
@@ -71,6 +69,7 @@ Canvas::Canvas(QWidget *parent)
     imageBackgroundColor = QColor(255, 255, 255);
     imageBorderColor = QColor(127, 127, 127);
     pixmap.fill(imageBackgroundColor);
+    auto a = pixmap.width();
 }
 
 void Canvas::addSun(QLine line, LineColor color, LineAlgorithm alg, int lines) {

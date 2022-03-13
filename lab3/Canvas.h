@@ -32,6 +32,7 @@ protected:
     void paintEvent(QPaintEvent *e) override;
 
 private:
+    static const int canvasSize = 700;
     struct Sun {
         QList<QLine> lines;
         QColor color;
