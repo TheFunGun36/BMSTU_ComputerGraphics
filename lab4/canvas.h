@@ -45,7 +45,6 @@ enum class Color {
 };
 
 enum class Algorithm {
-    library,
     canonicalEquation,
     parametricalEquation,
     brezenham,

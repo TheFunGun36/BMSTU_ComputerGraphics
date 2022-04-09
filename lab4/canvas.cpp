@@ -59,7 +59,7 @@ void Canvas::addEllipse(Ellipse ellipse, Color color, Algorithm algorithm) {
 
 void Canvas::addSpectrum(Ellipse begin, Ellipse end, int amount, Color color, Algorithm algorithm) {
     QColor clr = fromColor(color);
-    Ellipse diff = (begin - end) / (amount - 1.);
+    Ellipse diff = (end - begin) / (amount - 1.);
 
     for (int i = 0; i < amount; i++) {
         drawEllipse(begin, clr, algorithm);
@@ -87,9 +87,6 @@ void Canvas::drawEllipse(Ellipse ellipse, QColor color, Algorithm algorithm) {
     switch (algorithm) {
         case Algorithm::brezenham:
             algBrezenham(ellipse.cx, ellipse.cy, ellipse.rx, ellipse.ry, plot);
-            break;
-        case Algorithm::library:
-            algLibrary(ellipse.cx, ellipse.cy, ellipse.rx, ellipse.ry, plot);
             break;
         case Algorithm::canonicalEquation:
             algCanonicalEq(ellipse.cx, ellipse.cy, ellipse.rx, ellipse.ry, plot);

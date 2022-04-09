@@ -95,7 +95,7 @@
           <item>
            <widget class="QLabel" name="drawLabelLineEnd">
             <property name="text">
-             <string>Размеры малой и большой полуосей:</string>
+             <string>Радиусы по осям:</string>
             </property>
            </widget>
           </item>
@@ -160,11 +160,6 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <item>
-             <property name="text">
-              <string>Библиотечный алгоритм</string>
-             </property>
-            </item>
             <item>
              <property name="text">
               <string>Каноническое уравнение</string>
@@ -391,7 +386,7 @@
           <item>
            <widget class="QLabel" name="spectrumLabelEnd">
             <property name="text">
-             <string>Малая и большая полуоси конечн:</string>
+             <string>Радиусы по осям:</string>
             </property>
            </widget>
           </item>
@@ -483,11 +478,6 @@
           </item>
           <item>
            <widget class="QComboBox" name="spectrumComboAlgorithm">
-            <item>
-             <property name="text">
-              <string>Библиотечный алгоритм</string>
-             </property>
-            </item>
             <item>
              <property name="text">
               <string>Каноническое уравнение</string>
@@ -663,13 +653,80 @@
       </widget>
       <widget class="QWidget" name="tabLadder">
        <attribute name="title">
-        <string>График ступенчатости</string>
+        <string>Производительность алгоритмов</string>
        </attribute>
-      </widget>
-      <widget class="QWidget" name="tabChart">
-       <attribute name="title">
-        <string>Гистограмма производительности</string>
-       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QHBoxLayout" name="testLayoutHorizontal">
+          <item>
+           <spacer name="testSpacer1">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="testButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>24</pointsize>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Запустить тест алгоритмов</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="testSpacer2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="testProgress">
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCustomPlot" name="testPlot" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -683,6 +740,12 @@
    <extends>QOpenGLWidget</extends>
    <header>canvas.h</header>
   </customwidget>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>tabs</tabstop>
@@ -693,11 +756,16 @@
   <tabstop>drawComboAlgorithm</tabstop>
   <tabstop>drawComboColor</tabstop>
   <tabstop>drawButtonPaint</tabstop>
+  <tabstop>drawButtonClear</tabstop>
   <tabstop>spectrumLineBeginX</tabstop>
   <tabstop>spectrumLineBeginY</tabstop>
+  <tabstop>spectrumLineEndX</tabstop>
+  <tabstop>spectrumLineEndY</tabstop>
+  <tabstop>spectrumLineAmount</tabstop>
   <tabstop>spectrumComboAlgorithm</tabstop>
   <tabstop>spectrumComboColor</tabstop>
   <tabstop>spectrumButtonPaint</tabstop>
+  <tabstop>spectrumButtonClear</tabstop>
  </tabstops>
  <resources/>
  <connections/>
