@@ -21,8 +21,9 @@ void MainWindow::setupTabDraw() {
     ui.drawLineCenterY->setValidator(validatorInt);
     ui.drawLineSizeX->setValidator(validatorInt);
     ui.drawLineSizeY->setValidator(validatorInt);
+    ui.drawLineRadius->setValidator(validatorInt);
 
-    connect(ui.drawButtonPaint, &QPushButton::clicked, this,
+    connect(ui.drawButtonPaintEllipse, &QPushButton::clicked, this,
         [this]() {
             bool ok = true;
             Ellipse e;
@@ -38,6 +39,22 @@ void MainWindow::setupTabDraw() {
             }
         });
 
+    connect(ui.drawButtonPaintCircle, &QPushButton::clicked, this,
+        [this]() {
+            bool ok = true;
+            Ellipse e;
+            e.ry = 0.;
+            if (ok) e.cx = ui.drawLineCenterX->text().toInt(&ok);
+            if (ok) e.cy = ui.drawLineCenterY->text().toInt(&ok);
+            if (ok) e.rx = ui.drawLineRadius->text().toInt(&ok);
+            if (!ok) QMessageBox::warning(this, "Ошибка", "Не все значения окружности были введены");
+            else {
+                Color clr = Color(ui.drawComboColor->currentIndex());
+                Algorithm alg = Algorithm(ui.drawComboAlgorithm->currentIndex());
+                ui.drawCanvas->addCircle(e, clr, alg);
+            }
+        });
+
     connect(ui.drawButtonClear, &QPushButton::clicked, ui.drawCanvas, &Canvas::clear);
 }
 
@@ -47,8 +64,10 @@ void MainWindow::setupTabSpectrum() {
     ui.spectrumLineBeginY->setValidator(validatorInt);
     ui.spectrumLineEndX->setValidator(validatorInt);
     ui.spectrumLineEndY->setValidator(validatorInt);
+    ui.spectrumLineRadiusBegin->setValidator(validatorInt);
+    ui.spectrumLineRadiusEnd->setValidator(validatorInt);
 
-    connect(ui.spectrumButtonPaint, &QPushButton::clicked, this,
+    connect(ui.spectrumButtonPaintEllipse, &QPushButton::clicked, this,
         [this]() {
             bool ok = true;
             Ellipse begin;
@@ -75,7 +94,38 @@ void MainWindow::setupTabSpectrum() {
             else {
                 Color clr = Color(ui.spectrumComboColor->currentIndex());
                 Algorithm alg = Algorithm(ui.spectrumComboAlgorithm->currentIndex());
-                ui.spectrumCanvas->addSpectrum(begin, end, amount, clr, alg);
+                ui.spectrumCanvas->addEllipseSpectrum(begin, end, amount, clr, alg);
+            }
+        });
+
+    connect(ui.spectrumButtonPaintCircle, &QPushButton::clicked, this,
+        [this]() {
+            bool ok = true;
+            Ellipse begin;
+            begin.cx = 350;
+            begin.cy = 350;
+            begin.ry = 0;
+
+            Ellipse end;
+            end.cx = 350;
+            end.cy = 350;
+            end.ry = 0;
+
+            int amount = 0;
+            if (ok) begin.rx = ui.spectrumLineRadiusBegin->text().toInt(&ok);
+            if (ok) end.rx = ui.spectrumLineRadiusEnd->text().toInt(&ok);
+            if (ok) amount = ui.spectrumLineAmount->text().toInt(&ok);
+            if (!ok) QMessageBox::warning(this, "Ошибка", "Не все параметры спектра были введены");
+            else if (begin.rx == 0 || end.rx == 0) {
+                QMessageBox::warning(this, "Ошибка", "Радиус должен быть положительным числом");
+            }
+            else if (amount < 2) {
+                QMessageBox::warning(this, "Ошибка", "Количество окружностей должно быть не меньше двух");
+            }
+            else {
+                Color clr = Color(ui.spectrumComboColor->currentIndex());
+                Algorithm alg = Algorithm(ui.spectrumComboAlgorithm->currentIndex());
+                ui.spectrumCanvas->addCircleSpectrum(begin, end, amount, clr, alg);
             }
         });
 
@@ -83,91 +133,132 @@ void MainWindow::setupTabSpectrum() {
 }
 
 void MainWindow::setupTabTest() {
-    // set dark background gradient:
-    QLinearGradient gradient(0, 0, 0, 400);
-    gradient.setColorAt(0, QColor(90, 90, 90));
-    gradient.setColorAt(0.38, QColor(105, 105, 105));
-    gradient.setColorAt(1, QColor(70, 70, 70));
-    ui.testPlot->setBackground(QBrush(gradient));
+    //*
+    //ui.testPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    graphParam = ui.testPlot->addGraph();
+    graphCanon = ui.testPlot->addGraph();
+    graphBrezenham = ui.testPlot->addGraph();
+    graphAvgPoint = ui.testPlot->addGraph();
+    //QVector<double> x(n), y(n);
+    //for (int i=0; i<n; ++i) {
+    //  x[i] = i/(double)(n-1)*34 - 17;
+    //  y[i] = qExp(-x[i]*x[i]/20.0)*qSin(k*x[i]+phase);
+    //}
+    //graph->setData(x, y);
+    graphParam->setPen(QPen(Qt::black));
+    graphParam->setName("Параметрические уравнения");
 
-    // create empty bar chart objects
-    chartBars = new QCPBars(ui.testPlot->xAxis, ui.testPlot->yAxis);
-    chartBars->setAntialiased(false); // gives more crisp, pixel aligned bar borders
-    chartBars->setStackingGap(1);
+    graphCanon->setPen(QPen(Qt::red));
+    graphCanon->setName("Канонические уравнения");
 
-    // set names and colors
-    chartBars->setName("Время в микросекундах, затраченное на один прогон\n(среднее за 3000 прогонов)");
-    chartBars->setPen(QPen(QColor(111, 9, 176).lighter(170)));
-    chartBars->setBrush(QColor(111, 9, 176));
+    graphBrezenham->setPen(QPen(Qt::green));
+    graphBrezenham->setName("Алгоритм Брезенхема");
 
-    // stack bars on top of each other
-    //nuclear->moveAbove(fossil);
-    //regen->moveAbove(nuclear);
-
-    // prepare x axis with country labels
-    QVector<double> ticks;
-    QVector<QString> labels;
-    ticks << 1 << 2 << 3 << 4;
-    labels << "Параметрические ур-я" << "Каноническое ур-е" << "Алгоритм брезенхема" << "Алгоритм средней точки";
-
-    QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
-    textTicker->addTicks(ticks, labels);
-    ui.testPlot->xAxis->setTicker(textTicker);
-    ui.testPlot->xAxis->setTickLabelRotation(10);
-    ui.testPlot->xAxis->setSubTicks(false);
-    ui.testPlot->xAxis->setTickLength(0, 4);
-    ui.testPlot->xAxis->setRange(0, 6);
-    ui.testPlot->xAxis->setBasePen(QPen(Qt::white));
-    ui.testPlot->xAxis->setTickPen(QPen(Qt::white));
-    ui.testPlot->xAxis->grid()->setVisible(true);
-    ui.testPlot->xAxis->grid()->setPen(QPen(QColor(130, 130, 130), 0, Qt::DotLine));
-    ui.testPlot->xAxis->setTickLabelColor(Qt::white);
-    ui.testPlot->xAxis->setLabelColor(Qt::white);
-
-    // prepare y axis:
-    ui.testPlot->yAxis->setRange(0, 10);
-    ui.testPlot->yAxis->setPadding(5); // a bit more space to the left border
-    ui.testPlot->yAxis->setBasePen(QPen(Qt::white));
-    ui.testPlot->yAxis->setTickPen(QPen(Qt::white));
-    ui.testPlot->yAxis->setSubTickPen(QPen(Qt::white));
-    ui.testPlot->yAxis->grid()->setSubGridVisible(true);
-    ui.testPlot->yAxis->setTickLabelColor(Qt::white);
-    ui.testPlot->yAxis->setLabelColor(Qt::white);
-    ui.testPlot->yAxis->grid()->setPen(QPen(QColor(130, 130, 130), 0, Qt::SolidLine));
-    ui.testPlot->yAxis->grid()->setSubGridPen(QPen(QColor(130, 130, 130), 0, Qt::DotLine));
-
-    // Add data:
-    QVector<double> data;
-    data << 0 << 0 << 0 << 0;
-    chartBars->setData(ticks, data);
-
-    // setup legend:
+    graphAvgPoint->setPen(QPen(Qt::blue));
+    graphAvgPoint->setName("Алгоритм средней точки");
     ui.testPlot->legend->setVisible(true);
-    ui.testPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
-    ui.testPlot->legend->setBrush(QColor(255, 255, 255, 100));
-    ui.testPlot->legend->setBorderPen(Qt::NoPen);
+    ui.testPlot->xAxis->grid()->setZeroLinePen(Qt::NoPen);
 
-    QFont legendFont = font();
-    legendFont.setPointSize(10);
-    ui.testPlot->legend->setFont(legendFont);
-    ui.testPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    connect(ui.testButtonEllipse, &QPushButton::clicked, this, [this] () {
+        const size_t points = 200;
 
-    connect(ui.testButton, &QPushButton::clicked, this, [this] () {
-        const int iter = 3000;
+        QVector<double> x(points);
+        QVector<double> y(points);
+        const size_t iterationsPerPoint = 50;
+        const size_t maxDelta = 5000;
+        const size_t triesMax = 10;
 
-        ui.testProgress->setValue(10);
-        double v4 = testAlgorithm(algAveragePoint, iter);
-        ui.testProgress->setValue(25);
-        double v3 = testAlgorithm(algBrezenham, iter);
-        ui.testProgress->setValue(50);
-        double v2 = testAlgorithm(algCanonicalEq, iter);
-        ui.testProgress->setValue(75);
-        double v1 = testAlgorithm(algParametricalEq, iter);
+        for (size_t i = 0; i < points; i++) {
+            ui.testProgress->setValue(i * 100 / points / 4);
+            x[i] = i * 4 + 200;
+            size_t tries = 0;
+            do
+                y[i] = testAlgorithmEllipse(algParametricalEq, iterationsPerPoint, x[i]);
+            while (i > 0 && tries++ < triesMax && y[i] - y[i - 1] > maxDelta);
+        }
+        graphParam->setData(x, y);
+
+        for (size_t i = 0; i < points; i++) {
+            ui.testProgress->setValue(25 + i * 100 / points / 4);
+            size_t tries = 0;
+            do
+                y[i] = testAlgorithmEllipse(algCanonicalEq, iterationsPerPoint, x[i]);
+            while (i > 0 && tries++ < triesMax && y[i] - y[i - 1] > maxDelta);
+        }
+        graphCanon->setData(x, y);
+
+        for (size_t i = 0; i < points; i++) {
+            ui.testProgress->setValue(50 + i * 100 / points / 4);
+            size_t tries = 0;
+            do
+                y[i] = testAlgorithmEllipse(algAveragePoint, iterationsPerPoint, x[i]);
+            while (i > 0 && tries++ < triesMax && y[i] - y[i - 1] > maxDelta);
+        }
+        graphAvgPoint->setData(x, y);
+
+        for (size_t i = 0; i < points; i++) {
+            ui.testProgress->setValue(75 + i * 100 / points / 4);
+            size_t tries = 0;
+            do
+                y[i] = testAlgorithmEllipse(algBrezenham, iterationsPerPoint, x[i]);
+            while (i > 0 && tries++ < triesMax && y[i] - y[i - 1] > maxDelta);
+        }
+        graphBrezenham->setData(x, y);
+
         ui.testProgress->setValue(100);
-
-        double m = qMax(qMax(v1, v2), qMax(v3, v4));
-        chartBars->setData({1, 2, 3, 4}, {v1, v2, v3, v4});
-        ui.testPlot->yAxis->setRange(0, m);
+        ui.testPlot->rescaleAxes();
         ui.testPlot->replot();
     });
+
+    connect(ui.testButtonCircle, &QPushButton::clicked, this, [this] () {
+        const size_t points = 200;
+
+        QVector<double> x(points);
+        QVector<double> y(points);
+        const size_t iterationsPerPoint = 50;
+        const size_t maxDelta = 5000;
+        const size_t triesMax = 10;
+
+        for (size_t i = 0; i < points; i++) {
+            ui.testProgress->setValue(i * 100 / points / 4);
+            x[i] = i * 4 + 200;
+            size_t tries = 0;
+            do
+                y[i] = testAlgorithmCircle(algParametricalEq, iterationsPerPoint, x[i]);
+            while (i > 0 && tries++ < triesMax && y[i] - y[i - 1] > maxDelta);
+        }
+        graphParam->setData(x, y);
+
+        for (size_t i = 0; i < points; i++) {
+            ui.testProgress->setValue(25 + i * 100 / points / 4);
+            size_t tries = 0;
+            do
+                y[i] = testAlgorithmCircle(algCanonicalEq, iterationsPerPoint, x[i]);
+            while (i > 0 && tries++ < triesMax && y[i] - y[i - 1] > maxDelta);
+        }
+        graphCanon->setData(x, y);
+
+        for (size_t i = 0; i < points; i++) {
+            ui.testProgress->setValue(50 + i * 100 / points / 4);
+            size_t tries = 0;
+            do
+                y[i] = testAlgorithmCircle(algAveragePoint, iterationsPerPoint, x[i]);
+            while (i > 0 && tries++ < triesMax && y[i] - y[i - 1] > maxDelta);
+        }
+        graphAvgPoint->setData(x, y);
+
+        for (size_t i = 0; i < points; i++) {
+            ui.testProgress->setValue(75 + i * 100 / points / 4);
+            size_t tries = 0;
+            do
+                y[i] = testAlgorithmCircle(algBrezenham, iterationsPerPoint, x[i]);
+            while (i > 0 && tries++ < triesMax && y[i] - y[i - 1] > maxDelta);
+        }
+        graphBrezenham->setData(x, y);
+
+        ui.testProgress->setValue(100);
+        ui.testPlot->rescaleAxes();
+        ui.testPlot->replot();
+    });
+    //*/
 }

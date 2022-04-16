@@ -1,9 +1,15 @@
 #pragma once
 #include <functional>
 
-void algCanonicalEq(int cx, int cy, int rx, int ry, std::function<void(int, int, double)> plot);
-void algParametricalEq(int cx, int cy, int rx, int ry, std::function<void(int, int, double)> plot);
-void algBrezenham(int cx, int cy, int rx, int ry, std::function<void(int, int, double)> plot);
-void algAveragePoint(int cx, int cy, int rx, int ry, std::function<void(int, int, double)> plot);
+void algCanonicalEq(long cx, long cy, long rx, long ry, std::function<void(long, long, double)> plot);
+void algParametricalEq(long cx, long cy, long rx, long ry, std::function<void(long, long, double)> plot);
+void algBrezenham(long cx, long cy, long rx, long ry, std::function<void(long, long, double)> plot);
+void algAveragePoint(long cx, long cy, long rx, long ry, std::function<void(long, long, double)> plot);
 
-double testAlgorithm(void (*f)(int, int, int, int, std::function<void(int, int, double)>), int iter);
+void algCanonicalEq(long cx, long cy, long r, std::function<void(long, long, double)> plot);
+void algParametricalEq(long cx, long cy, long r, std::function<void(long, long, double)> plot);
+void algBrezenham(long cx, long cy, long r, std::function<void(long, long, double)> plot);
+void algAveragePoint(long cx, long cy, long r, std::function<void(long, long, double)> plot);
+
+double testAlgorithmEllipse(void (*f)(long, long, long, long, std::function<void(long, long, double)>), long iter, long radius);
+double testAlgorithmCircle(void (*f)(long, long, long, std::function<void(long, long, double)>), long iter, long radius);

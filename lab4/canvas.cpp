@@ -57,12 +57,26 @@ void Canvas::addEllipse(Ellipse ellipse, Color color, Algorithm algorithm) {
     drawEllipse(ellipse, fromColor(color), algorithm);
 }
 
-void Canvas::addSpectrum(Ellipse begin, Ellipse end, int amount, Color color, Algorithm algorithm) {
+void Canvas::addCircle(Ellipse ellipse, Color color, Algorithm algorithm) {
+    drawCircle(ellipse, fromColor(color), algorithm);
+}
+
+void Canvas::addEllipseSpectrum(Ellipse begin, Ellipse end, int amount, Color color, Algorithm algorithm) {
     QColor clr = fromColor(color);
     Ellipse diff = (end - begin) / (amount - 1.);
 
     for (int i = 0; i < amount; i++) {
         drawEllipse(begin, clr, algorithm);
+        begin = begin + diff;
+    }
+}
+
+void Canvas::addCircleSpectrum(Ellipse begin, Ellipse end, int amount, Color color, Algorithm algorithm) {
+    QColor clr = fromColor(color);
+    Ellipse diff = (end - begin) / (amount - 1.);
+
+    for (int i = 0; i < amount; i++) {
+        drawCircle(begin, clr, algorithm);
         begin = begin + diff;
     }
 }
@@ -96,6 +110,34 @@ void Canvas::drawEllipse(Ellipse ellipse, QColor color, Algorithm algorithm) {
             break;
         case Algorithm::averagePoint:
             algAveragePoint(ellipse.cx, ellipse.cy, ellipse.rx, ellipse.ry, plot);
+            break;
+        default:
+            throw "biba";
+    }
+
+    pixmap = QPixmap::fromImage(image);
+    update();
+}
+
+void Canvas::drawCircle(Ellipse ellipse, QColor color, Algorithm algorithm) {
+    QImage image(pixmap.toImage());
+    auto plot = [&image, color](int x, int y, double i){
+        QColor blendedColor = blendColor(color, image.pixelColor(x, y), i);
+        image.setPixelColor(x, y, blendedColor);
+    };
+
+    switch (algorithm) {
+        case Algorithm::brezenham:
+            algBrezenham(ellipse.cx, ellipse.cy, ellipse.rx, plot);
+            break;
+        case Algorithm::canonicalEquation:
+            algCanonicalEq(ellipse.cx, ellipse.cy, ellipse.rx, plot);
+            break;
+        case Algorithm::parametricalEquation:
+            algParametricalEq(ellipse.cx, ellipse.cy, ellipse.rx, plot);
+            break;
+        case Algorithm::averagePoint:
+            algAveragePoint(ellipse.cx, ellipse.cy, ellipse.rx, plot);
             break;
         default:
             throw "biba";

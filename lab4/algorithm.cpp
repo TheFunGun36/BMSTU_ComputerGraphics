@@ -4,45 +4,45 @@
 #include <chrono>
 #include <qdebug.h>
 
-static inline void symPlot(int cx, int cy, int x, int y, double i, std::function<void(int, int, double)> plot) {
+static inline void symPlot(long cx, long cy, long x, long y, double i, std::function<void(long, long, double)> plot) {
     plot(cx + x, cy + y, i);
     plot(cx + x, cy - y, i);
     plot(cx - x, cy + y, i);
     plot(cx - x, cy - y, i);
 }
 
-void algCanonicalEq(int cx, int cy, int rx, int ry, std::function<void(int, int, double)> plot) {
-    int rx2 = rx * rx;
-    int ry2 = ry * ry;
+void algCanonicalEq(long cx, long cy, long rx, long ry, std::function<void(long, long, double)> plot) {
+    long long rx2 = rx * rx;
+    long long ry2 = ry * ry;
 
-    for (int x = 0; x <= rx; x++) {
-        int y = round(ry * sqrt(1.0 - double(x * x) / rx2));
-        symPlot(cx, cy, x, y, 1.0, plot);
+    for (long long x = 0; x <= rx; x++) {
+        long long y = round(ry * sqrt(1. - double(x * x) / rx2));
+        symPlot(cx, cy, x, y, 1., plot);
     }
 
-    for (int y = 0; y <= ry; y++) {
-        int x = round(rx * sqrt(1.0 - double(y * y) / ry2));
+    for (long long y = 0; y <= ry; y++) {
+        long long x = round(rx * sqrt(1. - double(y * y) / ry2));
+        symPlot(cx, cy, x, y, 1., plot);
+    }
+}
+
+void algParametricalEq(long cx, long cy, long rx, long ry, std::function<void(long, long, double)> plot) {
+    long long m = std::max(rx, ry);
+    long long l = round(M_PI * m / 2);
+    for (long long i = 0; i <= l; i++) {
+        long long x = round(rx * cos(double(i) / m));
+        long long y = round(ry * sin(double(i) / m));
         symPlot(cx, cy, x, y, 1.0, plot);
     }
 }
 
-void algParametricalEq(int cx, int cy, int rx, int ry, std::function<void(int, int, double)> plot) {
-    int m = std::max(rx, ry);
-    int l = round(M_PI * m / 2);
-    for (int i = 0; i <= l; i++) {
-        int x = round(rx * cos(double(i) / m));
-        int y = round(ry * sin(double(i) / m));
-        symPlot(cx, cy, x, y, 1.0, plot);
-    }
-}
-
-void algBrezenham(int cx, int cy, int rx, int ry, std::function<void(int, int, double)> plot) {
-    int rx2 = rx * rx;
-    int ry2 = ry * ry;
-    int x = 0;
-    int y = ry;
-    int S = rx2 * (1 - 2 * ry) + 2 * ry2;
-    int T = ry2 - 2 * ry2 * (2 * ry - 1);
+void algBrezenham(long cx, long cy, long rx, long ry, std::function<void(long, long, double)> plot) {
+    long long rx2 = rx * rx;
+    long long ry2 = ry * ry;
+    long long x = 0;
+    long long y = ry;
+    long long S = rx2 * (1 - 2 * ry) + 2 * ry2;
+    long long T = ry2 - 2 * ry2 * (2 * ry - 1);
 
     symPlot(cx, cy, x, y, 1.0, plot);
     do {
@@ -67,10 +67,10 @@ void algBrezenham(int cx, int cy, int rx, int ry, std::function<void(int, int, d
     } while (y>0);
 }
 
-void algAveragePoint(int cx, int cy, int rx, int ry, std::function<void(int, int, double)> plot) {
+void algAveragePoint(long cx, long cy, long rx, long ry, std::function<void(long, long, double)> plot) {
     // начальные положения
-    int x = 0;
-    int y = ry;
+    long long x = 0;
+    long long y = ry;
 
     // квадраты полуосей (для упрощения вычислений)
     long long rx2 = rx * rx;
@@ -117,24 +117,122 @@ void algAveragePoint(int cx, int cy, int rx, int ry, std::function<void(int, int
     }
 }
 
-double testAlgorithm(void (*f)(int, int, int, int, std::function<void(int, int, double)>), int iter) {
-    using namespace std::chrono;
-    auto plot = [](int, int, double) {};
-
-    for (int i = 0; i < iter / 2; i++) {
-        f(350, 350, 350, 100, plot);
-        f(350, 350, 100, 350, plot);
-        f(350, 350, 500, 500, plot);
+void algCanonicalEq(long cx, long cy, long r, std::function<void(long, long, double)> plot) {
+    long r2 = r * r;
+    for (long x = 0; x <= r; x++) {
+        long y = round(sqrt(r2 - x * x));
+        symPlot(cx, cy, x, y, 1., plot);
     }
 
+    for (long y = 0; y <= r; y++){
+        long x = round(sqrt(r2 - y * y));
+        symPlot(cx, cy, x, y, 1., plot);
+    }
+}
+
+void algParametricalEq(long cx, long cy, long r, std::function<void(long, long, double)> plot) {
+    long l = round(M_PI * r / 2);  // длина четверти окружности
+    for (long i = 0; i <= l; i++) {
+        long x = round(r * cos(i / r));
+        long y = round(r * sin(i / r));
+        symPlot(cx, cy, x, y, 1., plot);
+    }
+}
+
+void algBrezenham(long cx, long cy, long r, std::function<void(long, long, double)> plot) {
+    long x = 0;
+    long y = r;
+    long d = 2 - 2 * r; // D(0,R)
+
+    while (y >= 0) {
+        symPlot(cx, cy, x, y, 1., plot);
+
+        if (d < 0) {
+            // пиксель лежит внутри окружности
+            long buf = 2 * d + 2 * y - 1;
+            x++;
+
+            if (buf <= 0) {
+                // горизонтальный шаг
+                d = d + 2 * x + 1;
+            }
+            else {
+                // диагональный шаг
+                y -= 1;
+                d = d + 2 * x - 2 * y + 2;
+            }
+        }
+        else if (d > 0) {
+            // пиксель лежит вне окружности
+            long buf = 2 * d - 2 * x - 1;
+            y--;
+
+            if (buf > 0) {
+                //вертикальный шаг
+                d = d - 2 * y + 1;
+            }
+            else {
+                //диагональный шаг
+                x++;
+                d = d + 2 * x - 2 * y + 2;
+            }
+        }
+        else {
+            // пиксель лежит на окружности
+            // диагональный шаг
+            x++;
+            y--;
+            d = d + 2 * x - 2 * y + 2;
+        }
+    }
+}
+
+void algAveragePoint(long cx, long cy, long r, std::function<void(long, long, double)> plot) {
+    long x = 0;
+    long y = r;
+    double p = 5. / 4. - r;  // (x + 1)^2 + (y - 1/2)^2 - r^2
+    while (y > x) {
+        symPlot(cx, cy, x, y, 1., plot);
+        symPlot(cx, cy, y, x, 1., plot);
+
+        x++;
+
+        if (p < 0.) {
+            // средняя точка внутри окружности, ближе верхний пиксел, горизонтальный шаг
+            p += 2 * x + 1;
+        }
+        else {
+            // средняя точка вне окружности, ближе диагональный пиксел, диагональный шаг
+            p += 2 * x - 2 * y + 5;
+            y--;
+        }
+    }
+}
+
+double testAlgorithmEllipse(void (*f)(long, long, long, long, std::function<void(long, long, double)>), long iter, long radius) {
+    using namespace std::chrono;
+    auto plot = [](long, long, double) {};
+
     time_point begin = high_resolution_clock::now();
-    for (int i = 0; i < iter; i++) {
-        f(350, 350, 350, 100, plot);
-        f(350, 350, 100, 350, plot);
-        f(350, 350, 500, 500, plot);
+    for (long i = 0; i < iter; i++) {
+        f(0, 0, radius, 2 * radius, plot);
     }
     time_point end = high_resolution_clock::now();
 
-    double result = duration<double, std::micro>((end - begin) / iter / 3).count();
+    double result = duration<double, std::nano>((end - begin) / iter / 3).count();
+    return result;
+}
+
+double testAlgorithmCircle(void (*f)(long, long, long, std::function<void(long, long, double)>), long iter, long radius) {
+    using namespace std::chrono;
+    auto plot = [](long, long, double) {};
+
+    time_point begin = high_resolution_clock::now();
+    for (long i = 0; i < iter; i++) {
+        f(0, 0, radius, plot);
+    }
+    time_point end = high_resolution_clock::now();
+
+    double result = duration<double, std::nano>((end - begin) / iter / 3).count();
     return result;
 }

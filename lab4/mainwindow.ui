@@ -27,14 +27,14 @@
        <enum>Qt::TabFocus</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="usesScrollButtons">
        <bool>false</bool>
       </property>
       <widget class="QWidget" name="tabDraw">
        <attribute name="title">
-        <string>Рисование эллипса</string>
+        <string>Отрисовка единичного элемента</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
@@ -42,7 +42,7 @@
           <item>
            <widget class="QLabel" name="drawLabelLineStart">
             <property name="text">
-             <string>Координаты центра эллипса:</string>
+             <string>Координаты центра:</string>
             </property>
            </widget>
           </item>
@@ -83,59 +83,6 @@
             </property>
             <property name="sizeType">
              <enum>QSizePolicy::Minimum</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>5</width>
-              <height>8</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="drawLabelLineEnd">
-            <property name="text">
-             <string>Радиусы по осям:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="drawLayoutSize">
-            <item>
-             <widget class="QLineEdit" name="drawLineSizeX">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="placeholderText">
-               <string>X</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="drawLineSizeY">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="placeholderText">
-               <string>Y</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="drawSpacer2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -241,7 +188,7 @@
            </widget>
           </item>
           <item>
-           <spacer name="drawSpacer4">
+           <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -251,13 +198,83 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>5</width>
-              <height>16</height>
+              <height>8</height>
              </size>
             </property>
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="drawButtonPaint">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string> Радиус окружности:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="drawLineRadius"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="drawButtonPaintCircle">
+            <property name="text">
+             <string>Отрисовать окружность</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="drawSpacer2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>8</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="drawLabelLineEnd">
+            <property name="text">
+             <string>Полуоси эллипса:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="drawLayoutSize">
+            <item>
+             <widget class="QLineEdit" name="drawLineSizeX">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="placeholderText">
+               <string>X</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="drawLineSizeY">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="placeholderText">
+               <string>Y</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="drawButtonPaintEllipse">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -341,134 +358,11 @@
       </widget>
       <widget class="QWidget" name="tabSpectrum">
        <attribute name="title">
-        <string>Рисование спектра</string>
+        <string>Отрисовка спектра</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <layout class="QVBoxLayout" name="spectrumLeftPanel">
-          <item>
-           <widget class="QLabel" name="spectrumLabelCenter">
-            <property name="text">
-             <string>Малая и большая полуоси начальн:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="spectrumLayoutBegin">
-            <item>
-             <widget class="QLineEdit" name="spectrumLineBeginX">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="placeholderText">
-               <string>X</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="spectrumLineBeginY">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="placeholderText">
-               <string>Y</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="QLabel" name="spectrumLabelEnd">
-            <property name="text">
-             <string>Радиусы по осям:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="spectrumLayoutEnd">
-            <item>
-             <widget class="QLineEdit" name="spectrumLineEndX">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="placeholderText">
-               <string>X</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="spectrumLineEndY">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="placeholderText">
-               <string>Y</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="spectrumSpacer1">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>5</width>
-              <height>8</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="spectrumLabelAmount">
-            <property name="text">
-             <string>Количество эллипсов</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="spectrumLineAmount">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="spectrumSpacer2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>5</width>
-              <height>8</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item>
            <widget class="QLabel" name="spectrumLabelAlgorithm">
             <property name="text">
@@ -553,6 +447,39 @@
            </widget>
           </item>
           <item>
+           <spacer name="spectrumSpacer2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>8</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="spectrumLabelAmount">
+            <property name="text">
+             <string>Количество элементов:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="spectrumLineAmount">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="spectrumSpacer4">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -569,7 +496,81 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="spectrumButtonPaint">
+           <widget class="QLabel" name="spectrumLabelCenter">
+            <property name="text">
+             <string>Полуоси начальн:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="spectrumLayoutBegin">
+            <item>
+             <widget class="QLineEdit" name="spectrumLineBeginX">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="placeholderText">
+               <string>X</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="spectrumLineBeginY">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="placeholderText">
+               <string>Y</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="spectrumLabelEnd">
+            <property name="text">
+             <string>Полуоси конечн:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="spectrumLayoutEnd">
+            <item>
+             <widget class="QLineEdit" name="spectrumLineEndX">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="placeholderText">
+               <string>X</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="spectrumLineEndY">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="placeholderText">
+               <string>Y</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="spectrumButtonPaintEllipse">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -578,6 +579,54 @@
             </property>
             <property name="text">
              <string>Отрисовать спектр эллипсов</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="spectrumSpacer1">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>8</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Радиусы начальн. и конечн:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLineEdit" name="spectrumLineRadiusBegin">
+              <property name="placeholderText">
+               <string>начальн</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="spectrumLineRadiusEnd">
+              <property name="placeholderText">
+               <string>конечн</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="spectrumButtonPaintCircle">
+            <property name="text">
+             <string>Отрисовать спектр окружностей</string>
             </property>
            </widget>
           </item>
@@ -672,7 +721,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="testButton">
+           <widget class="QPushButton" name="testButtonEllipse">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -681,7 +730,7 @@
             </property>
             <property name="font">
              <font>
-              <pointsize>24</pointsize>
+              <pointsize>20</pointsize>
               <weight>50</weight>
               <bold>false</bold>
              </font>
@@ -690,7 +739,19 @@
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="text">
-             <string>Запустить тест алгоритмов</string>
+             <string>Запустить тест алгоритмов (эллипсов)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="testButtonCircle">
+            <property name="font">
+             <font>
+              <pointsize>20</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Запустить тест алгоритмов (окружностей)</string>
             </property>
            </widget>
           </item>
@@ -755,16 +816,12 @@
   <tabstop>drawLineSizeY</tabstop>
   <tabstop>drawComboAlgorithm</tabstop>
   <tabstop>drawComboColor</tabstop>
-  <tabstop>drawButtonPaint</tabstop>
   <tabstop>drawButtonClear</tabstop>
   <tabstop>spectrumLineBeginX</tabstop>
   <tabstop>spectrumLineBeginY</tabstop>
   <tabstop>spectrumLineEndX</tabstop>
   <tabstop>spectrumLineEndY</tabstop>
-  <tabstop>spectrumLineAmount</tabstop>
-  <tabstop>spectrumComboAlgorithm</tabstop>
-  <tabstop>spectrumComboColor</tabstop>
-  <tabstop>spectrumButtonPaint</tabstop>
+  <tabstop>spectrumButtonPaintEllipse</tabstop>
   <tabstop>spectrumButtonClear</tabstop>
  </tabstops>
  <resources/>

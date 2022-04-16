@@ -57,7 +57,9 @@ public:
     Canvas(QWidget *parent = nullptr);
 
     void addEllipse(Ellipse ellipse, Color color, Algorithm algorithm);
-    void addSpectrum(Ellipse begin, Ellipse end, int amount, Color color, Algorithm algorithm);
+    void addCircle(Ellipse ellipse, Color color, Algorithm algorithm);
+    void addEllipseSpectrum(Ellipse begin, Ellipse end, int amount, Color color, Algorithm algorithm);
+    void addCircleSpectrum(Ellipse begin, Ellipse end, int amount, Color color, Algorithm algorithm);
     void clear();
 
 protected:
@@ -71,4 +73,5 @@ private:
     QColor imageBorderColor;
 
     void drawEllipse(Ellipse ellipse, QColor clr, Algorithm alg);
+    void drawCircle(Ellipse ellipse, QColor clr, Algorithm alg);
 };

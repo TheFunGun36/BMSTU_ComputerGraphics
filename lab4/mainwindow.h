@@ -16,4 +16,8 @@ private:
     void setupTabTest();
 
     QCPBars *chartBars;
+    QCPGraph *graphParam;
+    QCPGraph *graphCanon;
+    QCPGraph *graphBrezenham;
+    QCPGraph *graphAvgPoint;
 };
