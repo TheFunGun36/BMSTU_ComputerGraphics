@@ -9,6 +9,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->buttonClear, &QPushButton::clicked, ui->canvas, &Canvas::clear);
     connect(ui->speed, &QSlider::valueChanged, ui->canvas, &Canvas::changeFillSpeed);
+    connect(ui->checkSeparator, &QCheckBox::toggled, ui->canvas, &Canvas::setSeparatorDraw);
+    connect(ui->checkRect, &QCheckBox::toggled, ui->canvas, &Canvas::setRectDraw);
+    connect(ui->buttonFill, &QPushButton::clicked, ui->canvas, &Canvas::beginFill);
 }
 
 MainWindow::~MainWindow() {
@@ -24,6 +27,4 @@ void MainWindow::onFillClicked() {
     case 3: clr = QColor(Qt::blue); break;
     case 4: clr = QColor(Qt::white); break;
     }
-
-
 }

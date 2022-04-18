@@ -6,14 +6,20 @@ Canvas::Canvas(QWidget *parent)
     : QWidget(parent)
     , pixmap(800, 800)
     , colorBg(QColor(255, 255, 255))
+    , colorFill(QColor(0, 0, 0))
     , penBorder(QColor(180, 180, 180))
     , penLine(QColor(0, 0, 0))
-    , penRect(QColor(200, 200, 200), 1, Qt::DashLine)
+    , penRect(QColor(0, 0, 0, 50), 1, Qt::DashLine)
+    , penSeparator(QColor(0, 0, 0), 1, Qt::DashDotLine)
     , polygons()
     , currentPoly()
-    , currentLine() {
+    , currentLine()
+    , fillDelay(99)
+    , timerDraw(this) {
     setMouseTracking(true);
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
+    timerDraw.setSingleShot(true);
+    timerDraw.setTimerType(Qt::PreciseTimer);
 
     pixmap.fill(colorBg);
     mode = Mode::idle;
@@ -46,10 +52,8 @@ void Canvas::mousePressEvent(QMouseEvent *e) {
         }
     }
     else if (e->button() == Qt::RightButton && mode != Mode::idle) {
-        if (currentPoly.size() >= 3) {
-            addPolygonToPixmap(currentPoly);
+        if (currentPoly.size() >= 3)
             polygons.append(currentPoly);
-        }
         mouseInputStop();
         update();
     }
@@ -83,23 +87,37 @@ void Canvas::paintEvent(QPaintEvent *e) {
     Q_UNUSED(e);
 
     QPainter qp(this);
-    qp.setPen(penBorder);
-    qp.drawRect(rect());
-    qp.setPen(penLine);
     qp.drawPixmap(pixmap.rect(), pixmap);
+    for (const auto &poly : polygons)
+        qp.drawPolygon(poly);
+    {
+        QRect r = rect();
+        r.setBottom(r.bottom() - 1);
+        r.setRight(r.right() - 1);
+        qp.setPen(penBorder);
+        qp.drawRect(r);
+    }
 
+    qp.setPen(penLine);
     if (mode != Mode::idle) {
         qp.drawPolyline(currentPoly);
         qp.drawLine(currentLine);
+        drawMisc(qp);
     }
-
-    qp.setPen(penRect);
-    qp.drawRect(polygonRect);
+    else if (!polygons.isEmpty()) {
+        drawMisc(qp);
+    }
 }
 
-void Canvas::addPolygonToPixmap(const QPolygon &p) {
-    QPainter qp(&pixmap);
-    qp.drawPolygon(p);
+void Canvas::drawMisc(QPainter &qp) {
+    if (shouldDrawRect) {
+        qp.setPen(penRect);
+        qp.drawRect(polygonRect);
+    }
+    if (shouldDrawSeparator) {
+        qp.setPen(penSeparator);
+        qp.drawLine(separator);
+    }
 }
 
 QPoint Canvas::pointStraight(QPoint base, QPoint point) {
@@ -136,6 +154,8 @@ void Canvas::recalculateMaxRect() {
             r = adjustMaxRect(r, pt);
 
     polygonRect = r;
+    separator.setP1(QPoint(r.center().x(), r.top() - 10));
+    separator.setP2(QPoint(r.center().x(), r.bottom() + 10));
 }
 
 QRect Canvas::adjustMaxRect(QRect r, QPoint pt) {
@@ -153,6 +173,7 @@ QRect Canvas::adjustMaxRect(QRect r, QPoint pt) {
 }
 
 void Canvas::clear() {
+    timerDraw.stop();
     pixmap.fill(colorBg);
     polygons.clear();
     mouseInputStop();
@@ -168,4 +189,152 @@ void Canvas::mouseInputStop() {
     currentLine = QLine();
     currentPoly.clear();
     recalculateMaxRect();
+}
+
+void Canvas::setSeparatorDraw(bool draw) {
+    shouldDrawSeparator = draw;
+    update();
+}
+
+void Canvas::setRectDraw(bool draw) {
+    shouldDrawRect = draw;
+    update();
+}
+
+void Canvas::updateTimer() {
+    timerDraw.disconnect();
+    timerDraw.setInterval(fillDelay / 4);
+}
+
+void Canvas::beginFill() {
+    if (polygons.isEmpty())
+        return;
+
+    drawState = DrawState();
+    drawState.currentPoly = polygons.cbegin();
+    drawState.currentPoly--;
+
+    updateTimer();
+    connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextPoly);
+    timerDraw.start();
+    //drawNextSize(); // with delay
+}
+
+void Canvas::drawNextPoly() {
+    drawState.currentPoly++;
+    if (drawState.currentPoly == polygons.cend()) {
+        return;
+    }
+
+    drawState.currentPoint = drawState.currentPoly->cbegin();
+    drawState.currentLine.setP2(*drawState.currentPoint);
+
+    updateTimer();
+    connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextSide);
+    timerDraw.start();
+}
+
+void Canvas::drawNextSide() {
+    drawState.currentLine.setP1(drawState.currentLine.p2());
+    drawState.currentPoint++;
+    if (drawState.lastLine) {
+        drawState.lastLine = false;
+        updateTimer();
+        connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextPoly);
+        timerDraw.start();
+        return;
+    }
+
+    if (drawState.currentPoint == drawState.currentPoly->cend()) {
+        drawState.currentLine.setP2(drawState.currentPoly->first());
+        drawState.lastLine = true;
+    }
+    else
+        drawState.currentLine.setP2(*drawState.currentPoint);
+
+    drawState.stepX = (0 < drawState.currentLine.dx()) - (drawState.currentLine.dx() < 0);
+    drawState.stepY = (0 < drawState.currentLine.dy()) - (drawState.currentLine.dy() < 0);
+    drawState.absDx = abs(drawState.currentLine.dx());
+    drawState.absDy = abs(drawState.currentLine.dy());
+    drawState.dxGreaterDy = drawState.absDx > drawState.absDy;
+    drawState.x = drawState.currentLine.x1();
+    drawState.y = drawState.currentLine.y1();
+    if (drawState.dxGreaterDy)
+        drawState.error = 2 * drawState.absDy - drawState.absDx;
+    else
+        drawState.error = 2 * drawState.absDx - drawState.absDy;
+
+    updateTimer();
+    connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextLine);
+    timerDraw.start();
+}
+
+void Canvas::drawNextLine() {
+    if (drawState.x == drawState.currentLine.x2() &&
+            drawState.y == drawState.currentLine.y2()) {
+        //drawLine(QPoint(drawState.x, drawState.y));
+        updateTimer();
+        connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextSide);
+        timerDraw.start();
+        return;
+    }
+
+    if (drawState.absDx > drawState.absDy) {
+        if (drawState.error >= 0) {
+            drawLine(QPoint(drawState.x, drawState.y));
+            drawState.y += drawState.stepY;
+            drawState.error -= 2 * drawState.absDx;
+        }
+
+        drawState.error += 2 * drawState.absDy;
+        drawState.x += drawState.stepX;
+    }
+    else {
+        drawLine(QPoint(drawState.x, drawState.y));
+
+        if (drawState.error >= 0) {
+            drawState.x += drawState.stepX;
+            drawState.error -= 2 * drawState.absDy;
+        }
+
+        drawState.error += 2 * drawState.absDx;
+        drawState.y += drawState.stepY;
+    }
+
+    updateTimer();
+    connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextLine);
+    timerDraw.start();
+}
+
+void Canvas::drawLine(QPoint point) {
+    QImage image = pixmap.toImage();
+    int endpoint = separator.x1();
+
+    int x = point.x();
+    if (x < endpoint) {
+        while (x < separator.x1()) {
+            flipPixel(image, QPoint(x, point.y()));
+            x++;
+        }
+    }
+    else {
+        while (x >= separator.x1()) {
+            flipPixel(image, QPoint(x, point.y()));
+            x--;
+        }
+    }
+
+    pixmap.convertFromImage(image);
+    update();
+}
+
+void Canvas::flipPixel(QImage &image, QPoint pos) {
+    if (image.pixelColor(pos) == colorFill)
+        image.setPixelColor(pos, colorBg);
+    else
+        image.setPixelColor(pos, colorFill);
+}
+
+void Canvas::setColorFill(QColor color) {
+    colorFill = color;
 }
