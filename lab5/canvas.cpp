@@ -20,6 +20,9 @@ Canvas::Canvas(QWidget *parent)
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
     timerDraw.setSingleShot(true);
     timerDraw.setTimerType(Qt::PreciseTimer);
+    shouldDrawRect = true;
+    shouldDrawLines = true;
+    shouldDrawSeparator = true;
 
     pixmap.fill(colorBg);
     mode = Mode::idle;
@@ -88,8 +91,6 @@ void Canvas::paintEvent(QPaintEvent *e) {
 
     QPainter qp(this);
     qp.drawPixmap(pixmap.rect(), pixmap);
-    for (const auto &poly : polygons)
-        qp.drawPolygon(poly);
     {
         QRect r = rect();
         r.setBottom(r.bottom() - 1);
@@ -99,6 +100,9 @@ void Canvas::paintEvent(QPaintEvent *e) {
     }
 
     qp.setPen(penLine);
+    if (shouldDrawLines)
+        for (const auto &poly : polygons)
+            qp.drawPolygon(poly);
     if (mode != Mode::idle) {
         qp.drawPolyline(currentPoly);
         qp.drawLine(currentLine);
@@ -201,6 +205,11 @@ void Canvas::setRectDraw(bool draw) {
     update();
 }
 
+void Canvas::setDrawLines(bool draw) {
+    shouldDrawLines = draw;
+    update();
+}
+
 void Canvas::updateTimer() {
     timerDraw.disconnect();
     timerDraw.setInterval(fillDelay / 4);
@@ -211,6 +220,8 @@ void Canvas::beginFill() {
         return;
 
     drawState = DrawState();
+    drawState.immediate = false;
+    drawState.noDraw = false;
     drawState.currentPoly = polygons.cbegin();
     drawState.currentPoly--;
 
@@ -218,6 +229,24 @@ void Canvas::beginFill() {
     connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextPoly);
     timerDraw.start();
     //drawNextSize(); // with delay
+}
+
+std::chrono::duration<double, std::milli> Canvas::testAlgorithm() {
+    using namespace std::chrono;
+    if (polygons.isEmpty())
+        throw "biba";
+
+    drawState = DrawState();
+    drawState.immediate = true;
+    drawState.noDraw = true;
+    drawState.currentPoly = polygons.cbegin();
+    drawState.currentPoly--;
+
+    auto begin = high_resolution_clock::now();
+    drawNextPoly();
+    auto end = high_resolution_clock::now();
+
+    return end - begin;
 }
 
 void Canvas::drawNextPoly() {
@@ -229,59 +258,79 @@ void Canvas::drawNextPoly() {
     drawState.currentPoint = drawState.currentPoly->cbegin();
     drawState.currentLine.setP2(*drawState.currentPoint);
 
-    updateTimer();
-    connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextSide);
-    timerDraw.start();
+    if (drawState.immediate) {
+        drawNextSide();
+    }
+    else {
+        updateTimer();
+        connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextSide);
+        timerDraw.start();
+    }
 }
 
 void Canvas::drawNextSide() {
-    drawState.currentLine.setP1(drawState.currentLine.p2());
-    drawState.currentPoint++;
-    if (drawState.lastLine) {
-        drawState.lastLine = false;
+    do {
+        drawState.currentLine.setP1(drawState.currentLine.p2());
+        drawState.currentPoint++;
+        if (drawState.lastLine) {
+            drawState.lastLine = false;
+            if (drawState.immediate)
+                drawNextPoly();
+            else {
+                updateTimer();
+                connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextPoly);
+                timerDraw.start();
+            }
+            return;
+        }
+
+        if (drawState.currentPoint == drawState.currentPoly->cend()) {
+            drawState.currentLine.setP2(drawState.currentPoly->first());
+            drawState.lastLine = true;
+        }
+        else
+            drawState.currentLine.setP2(*drawState.currentPoint);
+    }
+    while (drawState.currentLine.dy() == 0);
+
+        drawState.stepX = (0 < drawState.currentLine.dx()) - (drawState.currentLine.dx() < 0);
+        drawState.stepY = (0 < drawState.currentLine.dy()) - (drawState.currentLine.dy() < 0);
+        drawState.absDx = abs(drawState.currentLine.dx());
+        drawState.absDy = abs(drawState.currentLine.dy());
+        drawState.dxGreaterDy = drawState.absDx > drawState.absDy;
+        drawState.x = drawState.currentLine.x1();
+        drawState.y = drawState.currentLine.y1();
+        if (drawState.dxGreaterDy)
+            drawState.error = 2 * drawState.absDy - drawState.absDx;
+        else
+            drawState.error = 2 * drawState.absDx - drawState.absDy;
+
+    if (drawState.immediate)
+        drawNextLine();
+    else {
         updateTimer();
-        connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextPoly);
+        connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextLine);
         timerDraw.start();
-        return;
     }
-
-    if (drawState.currentPoint == drawState.currentPoly->cend()) {
-        drawState.currentLine.setP2(drawState.currentPoly->first());
-        drawState.lastLine = true;
-    }
-    else
-        drawState.currentLine.setP2(*drawState.currentPoint);
-
-    drawState.stepX = (0 < drawState.currentLine.dx()) - (drawState.currentLine.dx() < 0);
-    drawState.stepY = (0 < drawState.currentLine.dy()) - (drawState.currentLine.dy() < 0);
-    drawState.absDx = abs(drawState.currentLine.dx());
-    drawState.absDy = abs(drawState.currentLine.dy());
-    drawState.dxGreaterDy = drawState.absDx > drawState.absDy;
-    drawState.x = drawState.currentLine.x1();
-    drawState.y = drawState.currentLine.y1();
-    if (drawState.dxGreaterDy)
-        drawState.error = 2 * drawState.absDy - drawState.absDx;
-    else
-        drawState.error = 2 * drawState.absDx - drawState.absDy;
-
-    updateTimer();
-    connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextLine);
-    timerDraw.start();
 }
 
 void Canvas::drawNextLine() {
     if (drawState.x == drawState.currentLine.x2() &&
             drawState.y == drawState.currentLine.y2()) {
         //drawLine(QPoint(drawState.x, drawState.y));
-        updateTimer();
-        connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextSide);
-        timerDraw.start();
+        if (drawState.immediate)
+            drawNextSide();
+        else {
+            updateTimer();
+            connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextSide);
+            timerDraw.start();
+        }
         return;
     }
 
     if (drawState.absDx > drawState.absDy) {
         if (drawState.error >= 0) {
-            drawLine(QPoint(drawState.x, drawState.y));
+            drawLine(QPoint(drawState.x, drawState.y), drawState.noDraw);
             drawState.y += drawState.stepY;
             drawState.error -= 2 * drawState.absDx;
         }
@@ -290,7 +339,7 @@ void Canvas::drawNextLine() {
         drawState.x += drawState.stepX;
     }
     else {
-        drawLine(QPoint(drawState.x, drawState.y));
+        drawLine(QPoint(drawState.x, drawState.y), drawState.noDraw);
 
         if (drawState.error >= 0) {
             drawState.x += drawState.stepX;
@@ -301,30 +350,39 @@ void Canvas::drawNextLine() {
         drawState.y += drawState.stepY;
     }
 
-    updateTimer();
-    connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextLine);
-    timerDraw.start();
+    if (drawState.immediate)
+        drawNextLine();
+    else {
+        updateTimer();
+        connect(&timerDraw, &QTimer::timeout, this, &Canvas::drawNextLine);
+        timerDraw.start();
+    }
 }
 
-void Canvas::drawLine(QPoint point) {
-    QImage image = pixmap.toImage();
+void Canvas::drawLine(QPoint point, bool noDraw) {
+    QImage image;
+    if (!noDraw)
+        image = pixmap.toImage();
     int endpoint = separator.x1();
 
     int x = point.x();
     if (x < endpoint) {
         while (x < separator.x1()) {
-            flipPixel(image, QPoint(x, point.y()));
+            if (!noDraw)
+                flipPixel(image, QPoint(x, point.y()));
             x++;
         }
     }
     else {
         while (x >= separator.x1()) {
-            flipPixel(image, QPoint(x, point.y()));
+            if (!noDraw)
+                flipPixel(image, QPoint(x, point.y()));
             x--;
         }
     }
 
-    pixmap.convertFromImage(image);
+    if (!noDraw)
+        pixmap.convertFromImage(image);
     update();
 }
 
