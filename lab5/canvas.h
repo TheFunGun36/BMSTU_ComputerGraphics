@@ -10,6 +10,7 @@
 #include <qtimer.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <chrono>
 
 class Canvas : public QWidget {
     Q_OBJECT
@@ -21,8 +22,10 @@ public slots:
     void changeFillSpeed(int value);
     void setSeparatorDraw(bool draw);
     void setRectDraw(bool draw);
+    void setDrawLines(bool draw);
     void setColorFill(QColor color);
     void beginFill();
+    std::chrono::duration<double, std::milli> testAlgorithm();
 
 protected:
     void paintEvent(QPaintEvent *e) override;
@@ -46,6 +49,7 @@ private:
     int fillDelay;
     bool shouldDrawSeparator;
     bool shouldDrawRect;
+    bool shouldDrawLines;
 
     enum class Mode {
         idle,
@@ -68,6 +72,8 @@ private:
         int y;
         bool dxGreaterDy;
         bool lastLine;
+        bool immediate;
+        bool noDraw;
 
         DrawState() = default;
     };
@@ -84,7 +90,7 @@ private:
     void mouseInputStop();
     void drawMisc(QPainter &qp);
 
-    void drawLine(QPoint point);
+    void drawLine(QPoint point, bool noDraw = false);
     void updateTimer();
     void flipPixel(QImage &image, QPoint pos);
 private slots:
