@@ -372,7 +372,7 @@ public class Canvas : TextureRect
 
 			x = tx + 1;
 			clr = _pixmap.GetPixel(x, y);
-			while (x < RectSize.x && clr == BackgroundColor)
+			while (x < RectSize.x - 1 && clr == BackgroundColor)
 			{
 				_pixmap.SetPixel(x, y, ActiveColor);
 				x++;
