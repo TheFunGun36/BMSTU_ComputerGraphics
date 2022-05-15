@@ -62,7 +62,7 @@ public class Canvas : TextureRect
 	{
 		return new Vector2(vec.x + 1, vec.y + 1);
 	}
-	
+
 	///// DRAW GODOT /////
 	public override void _Draw()
 	{
@@ -332,34 +332,8 @@ public class Canvas : TextureRect
 			}
 		}
 	}
-	private void ProcessPoint(Queue<Vector2> stack, int x, int y)
-	{
-		if (x >= 0 && y >= 0 && x < _pixmap.GetSize().x && y < _pixmap.GetSize().y)
-		{
-			if (_pixmap.GetPixel(x, y) == BackgroundColor)
-			{
-				_pixmap.SetPixel(x, y, ActiveColor);
-				stack.Enqueue(new Vector2(x, y));
-			}
-		}
-	}
 	private void FillArea()
 	{
-		//Queue<Vector2> points = new Queue<Vector2>();
-		//_pixmap.Lock();
-		//_pixmap.SetPixel((int)_fillBeginPoint.x, (int)_fillBeginPoint.y, ActiveColor);
-		//points.Enqueue(_fillBeginPoint);
-		//
-		//while (points.Count > 0)
-		//{
-		//	Vector2 point = points.Dequeue();
-		//	ProcessPoint(points, (int)point.x + 1, (int)point.y);
-		//	ProcessPoint(points, (int)point.x - 1, (int)point.y);
-		//	ProcessPoint(points, (int)point.x, (int)point.y + 1);
-		//	ProcessPoint(points, (int)point.x, (int)point.y - 1);
-		//}
-		//
-		//_pixmap.Unlock();
 		_delayIterator = FillAreaDelayed();
 		do _delayIterator.MoveNext(); while (_delayIterator.Current);
 		UpdateImage();
@@ -371,29 +345,91 @@ public class Canvas : TextureRect
 	}
 	private IEnumerator<bool> FillAreaDelayed()
 	{
-		Queue<Vector2> points = new Queue<Vector2>();
-		_pixmap.Lock();
-		_pixmap.SetPixel((int)_fillBeginPoint.x, (int)_fillBeginPoint.y, ActiveColor);
-		_pixmap.Unlock();
-		points.Enqueue(_fillBeginPoint);
+		Stack<Vector2> points = new Stack<Vector2>();
+		points.Push(_fillBeginPoint);
 
 		while (points.Count > 0)
 		{
-			Vector2 point = points.Dequeue();
+			Vector2 point = points.Pop();
 			_currentPosition = point;
+			int x = (int)point.x;
+			int xLeft;
+			int xRight;
+			int y = (int)point.y;
 			_pixmap.Lock();
-			ProcessPoint(points, (int)point.x + 1, (int)point.y);
-			ProcessPoint(points, (int)point.x - 1, (int)point.y);
-			ProcessPoint(points, (int)point.x, (int)point.y + 1);
-			ProcessPoint(points, (int)point.x, (int)point.y - 1);
+			_pixmap.SetPixel(x, y, ActiveColor);
+			int tx = x;
+
+			x--;
+			Color clr = _pixmap.GetPixel(x, y);
+			while (x > 0 && clr == BackgroundColor)
+			{
+				_pixmap.SetPixel(x, y, ActiveColor);
+				x--;
+				clr = _pixmap.GetPixel(x, y);
+			}
+			xLeft = x + 1;
+
+			x = tx + 1;
+			clr = _pixmap.GetPixel(x, y);
+			while (x < RectSize.x && clr == BackgroundColor)
+			{
+				_pixmap.SetPixel(x, y, ActiveColor);
+				x++;
+				clr = _pixmap.GetPixel(x, y);
+			}
+			xRight = x - 1;
 			_pixmap.Unlock();
+
 			yield return true;
+
+			_pixmap.Lock();
+			if (y > 0)
+			{
+				y--;
+				FindNewPoints(points, xLeft, xRight, x, y);
+				y++;
+			}
+			if (y < RectSize.y - 1)
+			{
+				y++;
+				FindNewPoints(points, xLeft, xRight, x, y);
+				y--;
+			}
+			_pixmap.Unlock();
 		}
 
-		UpdateImage();
 		yield return false;
 	}
+	private void FindNewPoints(Stack<Vector2> points, int xLeft, int xRight, int x, int y)
+	{
+		x = xLeft;
+		while (x <= xRight)
+		{
+			bool fl = false;
+			while (_pixmap.GetPixel(x, y) == BackgroundColor && x <= xRight)
+			{
+				fl = true;
+				x++;
+			}
 
+			if (fl)
+			{
+				if (_pixmap.GetPixel(x, y) == BackgroundColor && x < xRight)
+					points.Push(new Vector2(x, y));
+				else
+					points.Push(new Vector2(x - 1, y));
+			}
+
+			int xn = x;
+			while (_pixmap.GetPixel(x, y) != BackgroundColor && x < xRight)
+				x++;
+
+			if (x == xn)
+				x++;
+		}
+	}
+	
 	///// SLOTS /////
 	private void AdvancesPerTickNew(int value) => AdvancesPerTick = (uint)value;
 }
