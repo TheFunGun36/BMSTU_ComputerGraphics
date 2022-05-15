@@ -1,0 +1,63 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Row.cs" type="Script" id=1]
+[ext_resource path="res://MainTheme.tres" type="Theme" id=2]
+
+[node name="Row" type="HBoxContainer"]
+theme = ExtResource( 2 )
+script = ExtResource( 1 )
+SpinX1Path = NodePath("SpinX1")
+SpinY1Path = NodePath("SpinY1")
+SpinX2Path = NodePath("SpinX2")
+SpinY2Path = NodePath("SpinY2")
+ButtonDeletePath = NodePath("DestroyButton")
+
+[node name="SpinX1" type="SpinBox" parent="."]
+margin_right = 134.0
+margin_bottom = 50.0
+rect_pivot_offset = Vector2( -476, -46 )
+max_value = 900.0
+rounded = true
+
+[node name="SpinY1" type="SpinBox" parent="."]
+margin_left = 138.0
+margin_right = 272.0
+margin_bottom = 50.0
+rect_pivot_offset = Vector2( -476, -46 )
+max_value = 900.0
+rounded = true
+
+[node name="Splitter" type="Label" parent="."]
+margin_left = 276.0
+margin_top = 5.0
+margin_right = 340.0
+margin_bottom = 45.0
+text = "<-->"
+
+[node name="SpinX2" type="SpinBox" parent="."]
+margin_left = 344.0
+margin_right = 478.0
+margin_bottom = 50.0
+rect_pivot_offset = Vector2( -476, -46 )
+max_value = 900.0
+rounded = true
+
+[node name="SpinY2" type="SpinBox" parent="."]
+margin_left = 482.0
+margin_right = 616.0
+margin_bottom = 50.0
+rect_pivot_offset = Vector2( -476, -46 )
+max_value = 900.0
+rounded = true
+
+[node name="DestroyButton" type="Button" parent="."]
+margin_left = 620.0
+margin_right = 653.0
+margin_bottom = 50.0
+text = "X"
+
+[connection signal="value_changed" from="SpinX1" to="." method="OnChanged"]
+[connection signal="value_changed" from="SpinY1" to="." method="OnChanged"]
+[connection signal="value_changed" from="SpinX2" to="." method="OnChanged"]
+[connection signal="value_changed" from="SpinY2" to="." method="OnChanged"]
+[connection signal="pressed" from="DestroyButton" to="." method="OnDestroy"]

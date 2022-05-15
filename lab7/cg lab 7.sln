@@ -1,0 +1,19 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cg lab 7", "cg lab 7.csproj", "{4A9E1E40-5B32-4E5A-AA4F-47E7DCE6F0EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Any CPU = Debug|Any CPU
+	ExportDebug|Any CPU = ExportDebug|Any CPU
+	ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A9E1E40-5B32-4E5A-AA4F-47E7DCE6F0EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A9E1E40-5B32-4E5A-AA4F-47E7DCE6F0EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A9E1E40-5B32-4E5A-AA4F-47E7DCE6F0EE}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{4A9E1E40-5B32-4E5A-AA4F-47E7DCE6F0EE}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{4A9E1E40-5B32-4E5A-AA4F-47E7DCE6F0EE}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{4A9E1E40-5B32-4E5A-AA4F-47E7DCE6F0EE}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,195 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Canvas.cs" type="Script" id=1]
+[ext_resource path="res://BlankCanvas.png" type="Texture" id=2]
+[ext_resource path="res://MainTheme.tres" type="Theme" id=3]
+[ext_resource path="res://Table.cs" type="Script" id=4]
+[ext_resource path="res://Rect.cs" type="Script" id=5]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+margin_left = 700.0
+margin_right = 1600.0
+margin_bottom = 900.0
+texture = ExtResource( 2 )
+script = ExtResource( 1 )
+TablePath = NodePath("../GUI/Scrollable/Table")
+RectPath = NodePath("../GUI/Rect")
+LinesColor = Color( 0, 0, 0, 1 )
+LinesCuttedColor = Color( 1, 0, 0, 1 )
+CutoffColor = Color( 0, 0.462745, 1, 1 )
+
+[node name="GUI" type="VBoxContainer" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+theme = ExtResource( 3 )
+
+[node name="RectLabel" type="Label" parent="GUI"]
+margin_right = 700.0
+margin_bottom = 40.0
+text = "Отсекающий прямоугольник:"
+
+[node name="Head2" type="HBoxContainer" parent="GUI"]
+margin_top = 44.0
+margin_right = 700.0
+margin_bottom = 84.0
+
+[node name="X1" type="Label" parent="GUI/Head2"]
+margin_right = 134.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 134, 0 )
+text = "X1"
+align = 1
+
+[node name="Y1" type="Label" parent="GUI/Head2"]
+margin_left = 138.0
+margin_right = 272.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 134, 0 )
+text = "Y1"
+align = 1
+
+[node name="X2" type="Label" parent="GUI/Head2"]
+margin_left = 276.0
+margin_right = 410.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 134, 0 )
+text = "X2"
+align = 1
+
+[node name="Y2" type="Label" parent="GUI/Head2"]
+margin_left = 414.0
+margin_right = 548.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 134, 0 )
+text = "Y2"
+align = 1
+
+[node name="Rect" type="HBoxContainer" parent="GUI"]
+margin_top = 88.0
+margin_right = 700.0
+margin_bottom = 138.0
+script = ExtResource( 5 )
+SpinX1Path = NodePath("SpinX1")
+SpinY1Path = NodePath("SpinY1")
+SpinX2Path = NodePath("SpinX2")
+SpinY2Path = NodePath("SpinY2")
+
+[node name="SpinX1" type="SpinBox" parent="GUI/Rect"]
+margin_right = 134.0
+margin_bottom = 50.0
+max_value = 900.0
+
+[node name="SpinY1" type="SpinBox" parent="GUI/Rect"]
+margin_left = 138.0
+margin_right = 272.0
+margin_bottom = 50.0
+max_value = 900.0
+
+[node name="SpinX2" type="SpinBox" parent="GUI/Rect"]
+margin_left = 276.0
+margin_right = 410.0
+margin_bottom = 50.0
+max_value = 900.0
+
+[node name="SpinY2" type="SpinBox" parent="GUI/Rect"]
+margin_left = 414.0
+margin_right = 548.0
+margin_bottom = 50.0
+max_value = 900.0
+
+[node name="Spacer2" type="Label" parent="GUI"]
+margin_top = 142.0
+margin_right = 700.0
+margin_bottom = 182.0
+
+[node name="ClearRow" type="HBoxContainer" parent="GUI"]
+margin_top = 186.0
+margin_right = 700.0
+margin_bottom = 232.0
+
+[node name="CutoffButton" type="Button" parent="GUI/ClearRow"]
+margin_right = 384.0
+margin_bottom = 46.0
+text = "Выполнить отсечение"
+
+[node name="Clear" type="Button" parent="GUI/ClearRow"]
+margin_left = 388.0
+margin_right = 646.0
+margin_bottom = 46.0
+text = "Очистить поле"
+
+[node name="AddLine" type="HBoxContainer" parent="GUI"]
+margin_top = 236.0
+margin_right = 700.0
+margin_bottom = 282.0
+
+[node name="AddPoint" type="Button" parent="GUI/AddLine"]
+margin_right = 317.0
+margin_bottom = 46.0
+text = "Добавить отрезок"
+
+[node name="Spacer" type="Label" parent="GUI"]
+margin_top = 286.0
+margin_right = 700.0
+margin_bottom = 326.0
+
+[node name="Head" type="HBoxContainer" parent="GUI"]
+margin_top = 330.0
+margin_right = 700.0
+margin_bottom = 370.0
+
+[node name="X1" type="Label" parent="GUI/Head"]
+margin_right = 134.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 134, 0 )
+text = "X1"
+align = 1
+
+[node name="Y1" type="Label" parent="GUI/Head"]
+margin_left = 138.0
+margin_right = 272.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 134, 0 )
+text = "Y1"
+align = 1
+
+[node name="Spacer" type="Label" parent="GUI/Head"]
+margin_left = 276.0
+margin_right = 340.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 64, 0 )
+
+[node name="X2" type="Label" parent="GUI/Head"]
+margin_left = 344.0
+margin_right = 478.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 134, 0 )
+text = "X2"
+align = 1
+
+[node name="Y2" type="Label" parent="GUI/Head"]
+margin_left = 482.0
+margin_right = 616.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 134, 0 )
+text = "Y2"
+align = 1
+
+[node name="Scrollable" type="ScrollContainer" parent="GUI"]
+margin_top = 374.0
+margin_right = 700.0
+margin_bottom = 1074.0
+rect_min_size = Vector2( 700, 700 )
+
+[node name="Table" type="VBoxContainer" parent="GUI/Scrollable"]
+script = ExtResource( 4 )
+
+[connection signal="value_changed" from="GUI/Rect/SpinX1" to="GUI/Rect" method="OnChanged"]
+[connection signal="value_changed" from="GUI/Rect/SpinY1" to="GUI/Rect" method="OnChanged"]
+[connection signal="value_changed" from="GUI/Rect/SpinX2" to="GUI/Rect" method="OnChanged"]
+[connection signal="value_changed" from="GUI/Rect/SpinY2" to="GUI/Rect" method="OnChanged"]
+[connection signal="pressed" from="GUI/ClearRow/CutoffButton" to="TextureRect" method="CutoffCohenSutherland"]
+[connection signal="pressed" from="GUI/ClearRow/Clear" to="TextureRect" method="Clear"]
+[connection signal="pressed" from="GUI/AddLine/AddPoint" to="GUI/Scrollable/Table" method="AddRow"]
